@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29326.143
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oxide.Ext.NoSteam-Windows", "Oxide.Ext.NoSteam\Oxide.Ext.NoSteam-Windows.csproj", "{0F98BF62-AE33-4CB9-848F-E484A5D7CE63}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oxide.Ext.NoSteam-Windows", "Oxide.Ext.NoSteam-Windows\Oxide.Ext.NoSteam-Windows.csproj", "{0F98BF62-AE33-4CB9-848F-E484A5D7CE63}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oxide.Plugins", "Plugins\Oxide.Plugins.csproj", "{CAE13537-5661-4660-9CEF-E865FA190C09}"
 EndProject
