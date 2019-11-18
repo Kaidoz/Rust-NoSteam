@@ -1,6 +1,6 @@
 ﻿// Author:  Kaidoz
-// Filename: STEAM_TICKET.cs
-// Last update: 2019.10.06 4:59
+// Filename: Ticket.cs
+// Last update: 2019.10.06 20:41
 
 using System.Runtime.InteropServices;
 
@@ -8,7 +8,7 @@ namespace Oxide.Ext.NoSteam.Helper
 {
     // Token: 0x02000012 RID: 18
     [StructLayout(LayoutKind.Sequential, Pack = 1, Size = 234)]
-    public struct STEAM_TICKET
+    public struct Ticket
     {
         // Token: 0x0400004B RID: 75
         public uint Length;
@@ -23,9 +23,9 @@ namespace Oxide.Ext.NoSteam.Helper
         public uint ConnectionTime;
 
         // Token: 0x0400004F RID: 79
-        public STEAM_SESSION Session;
+        public SteamSession Session;
 
         // Token: 0x04000050 RID: 80
-        public STEAM_TOKENDATA Token;
+        public SteamTokendata Token;
     }
 }

@@ -4,18 +4,18 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Facepunch;
 using Facepunch.Math;
-using Harmony;
 using Ionic.Crc;
 using Network;
 using Oxide.Core;
-using Oxide.Ext.NoSteam.Core;
-using Oxide.Ext.NoSteam.Helper;
+using Oxide.Ext.NoSteam_Linux.Core;
+using Oxide.Ext.NoSteam_Linux.Helper;
 using Rust;
 using Steamworks;
 using UnityEngine;
+using HarmonyInstance = Harmony.HarmonyInstance;
 using LogType = Oxide.Core.Logging.LogType;
 
-namespace Oxide.Ext.NoSteam.Patch
+namespace Oxide.Ext.NoSteam_Linux.Patch
 {
     class Core
     {

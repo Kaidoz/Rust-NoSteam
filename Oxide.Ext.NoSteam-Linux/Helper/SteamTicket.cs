@@ -6,7 +6,7 @@ using System;
 using System.IO;
 using Network;
 
-namespace Oxide.Ext.NoSteam.Helper
+namespace Oxide.Ext.NoSteam_Linux.Helper
 {
     public class SteamTicket
     {

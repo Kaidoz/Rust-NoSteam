@@ -1,17 +1,17 @@
-﻿// Author:  Kaidoz
-// Filename: NoSteam.cs
-// Last update: 2019.10.06 20:41
-
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 using ConVar;
 using Oxide.Core;
 using Oxide.Core.Logging;
 using Oxide.Core.Plugins;
 
-namespace Oxide.Ext.NoSteam.Core
+namespace Oxide.Ext.NoSteam_Linux.Core
 {
-    internal class NoSteam : CSPlugin
+    class NoSteam : CSPlugin
     {
         public NoSteam(NoSteamExtension extension)
         {

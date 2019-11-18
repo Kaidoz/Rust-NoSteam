@@ -1,14 +1,14 @@
 ﻿// Author:  Kaidoz
-// Filename: STEAM_SESSION.cs
-// Last update: 2019.10.06 4:59
+// Filename: SteamSession.cs
+// Last update: 2019.10.06 20:41
 
 using System.Runtime.InteropServices;
 
-namespace Oxide.Ext.NoSteam.Helper
+namespace Oxide.Ext.NoSteam_Linux.Helper
 {
     // Token: 0x02000011 RID: 17
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct STEAM_SESSION
+    public struct SteamSession
     {
         // Token: 0x04000044 RID: 68
         public uint Length;

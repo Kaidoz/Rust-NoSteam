@@ -1,19 +1,16 @@
-﻿// Author:  Kaidoz
-// Filename: AssemblyInfo.cs
-// Last update: 2019.10.06 20:41
-
-using System.Reflection;
+﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // Общие сведения об этой сборке предоставляются следующим набором
 // набора атрибутов. Измените значения этих атрибутов для изменения сведений,
 // связанные со сборкой.
-[assembly: AssemblyTitle("Oxide.Ext.NoSteam")]
+[assembly: AssemblyTitle("Oxide.Ext.NoSteam-Linux")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Oxide.Ext.NoSteam")]
-[assembly: AssemblyCopyright("Kaidoz Copyright ©  2019")]
+[assembly: AssemblyProduct("Oxide.Ext.NoSteam-Linux")]
+[assembly: AssemblyCopyright("Copyright ©  2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -23,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Следующий GUID служит для идентификации библиотеки типов, если этот проект будет видимым для COM
-[assembly: Guid("0f98bf62-ae33-4cb9-848f-e484a5d7ce63")]
+[assembly: Guid("ac2e1a54-9fc8-4a08-82b0-ad462c65fcc9")]
 
 // Сведения о версии сборки состоят из указанных ниже четырех значений:
 //
@@ -35,5 +32,5 @@ using System.Runtime.InteropServices;
 // Можно задать все значения или принять номера сборки и редакции по умолчанию 
 // используя "*", как показано ниже:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.1")]
-[assembly: AssemblyFileVersion("1.0.0.1")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

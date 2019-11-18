@@ -1,6 +1,6 @@
 ﻿// Author:  Kaidoz
-// Filename: STEAM_TOKENDATA.cs
-// Last update: 2019.10.06 4:59
+// Filename: SteamTokendata.cs
+// Last update: 2019.10.06 20:41
 
 using System.Runtime.InteropServices;
 
@@ -8,7 +8,7 @@ namespace Oxide.Ext.NoSteam.Helper
 {
     // Token: 0x02000010 RID: 16
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct STEAM_TOKENDATA
+    public struct SteamTokendata
     {
         // Token: 0x0400002F RID: 47
         public int Length;

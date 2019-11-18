@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿// Author:  Kaidoz
+// Filename: Serilization.cs
+// Last update: 2019.10.06 20:41
 
-namespace Oxide.Ext.NoSteam.Helper
+using System.Runtime.InteropServices;
+
+namespace Oxide.Ext.NoSteam_Linux.Helper
 {
-    public static class SerializationExtension
+    public static class Serilization
     {
-        // Token: 0x06000071 RID: 113 RVA: 0x000059C0 File Offset: 0x00003BC0
         public static byte[] Serialize<T>(this T structure) where T : struct
         {
-            byte[] array = new byte[Marshal.SizeOf(typeof(T))];
-            IntPtr intPtr = Marshal.AllocHGlobal(array.Length);
+            var array = new byte[Marshal.SizeOf(typeof(T))];
+            var intPtr = Marshal.AllocHGlobal(array.Length);
             Marshal.StructureToPtr(structure, intPtr, true);
             Marshal.Copy(intPtr, array, 0, array.Length);
             Marshal.FreeHGlobal(intPtr);
@@ -25,15 +23,16 @@ namespace Oxide.Ext.NoSteam.Helper
         {
             try
             {
-                GCHandle gchandle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
-                T result = (T)((object)Marshal.PtrToStructure(gchandle.AddrOfPinnedObject(), typeof(T)));
+                var gchandle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
+                var result = (T) Marshal.PtrToStructure(gchandle.AddrOfPinnedObject(), typeof(T));
                 gchandle.Free();
                 return result;
             }
             catch
             {
             }
-            return default(T);
+
+            return default;
         }
     }
 }
