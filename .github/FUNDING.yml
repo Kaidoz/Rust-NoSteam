@@ -1,4 +1,1 @@
-# These are supported funding model platforms
-
-paypal: # ["https://www.paypal.me/ka1doz", ka1doz]
-qiwi: # ["https://qiwi.com/n/KAIDOZ", kaidoz]
+custom: ["https://www.paypal.me/ka1doz", "https://qiwi.com/n/KAIDOZ"]
