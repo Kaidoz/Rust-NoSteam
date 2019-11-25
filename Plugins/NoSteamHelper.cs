@@ -101,6 +101,7 @@ namespace Oxide.Plugins
 
         private object CanNewConnection(Connection connection, bool isSteam)
         {
+            
             if (_loaded)
             {
                 Puts("Need a restart server");
