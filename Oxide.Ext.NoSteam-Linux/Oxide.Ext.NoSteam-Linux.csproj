@@ -37,61 +37,87 @@
   <ItemGroup>
     <Reference Include="0Harmony, Version=1.2.0.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Lib.Harmony.1.2.0.1\lib\net45\0Harmony.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Facepunch.Console">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Console.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Facepunch.Input">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Input.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Facepunch.Network">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Network.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Facepunch.Raknet">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Raknet.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Facepunch.Rcon">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Rcon.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Facepunch.Skeleton">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Skeleton.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Facepunch.Sqlite">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Sqlite.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Facepunch.Steamworks.Posix64">
       <HintPath>C:\Users\Kaidoz\Downloads\Managed(7)\Managed\Facepunch.Steamworks.Posix64.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Facepunch.System">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.System.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Facepunch.Unity">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Unity.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Facepunch.UnityEngine">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.UnityEngine.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Ionic.Zip.Reduced">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Ionic.Zip.Reduced.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Oxide.Core">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Oxide.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Rust.Global">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Rust.Global.dll</HintPath>
+      <Private>True</Private>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Core">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data">
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml">
+      <Private>True</Private>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -24,7 +24,7 @@ namespace Oxide.Ext.NoSteam.Core
 
         public static void InitPlugin()
         {
-            Output("[NoSteam] Author: Kaidoz| Telegram: Kaidoz| VK: vk.com/kaidoz");
+            Output("[NoSteam] Author: Kaidoz\n Telegram: Kaidoz\n Github: github.com/Kaidoz/Rust-NoSteam");
             Server.encryption = 1;
             try
             {

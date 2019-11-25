@@ -14,7 +14,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("AuthMe", "Kaidoz", "1.5.5")]
+    [Info("AuthMe", "Kaidoz", "1.5.3")]
     [Description("Authorization for NoSteam(cracked) players")]
     public class AuthMe : RustPlugin
     {
@@ -79,9 +79,6 @@ namespace Oxide.Plugins
 
         private void ForceAuthorization(BasePlayer player)
         {
-            if (player == null)
-                return;
-
             var buffer = _dataAuthorizes[player.userID];
             if (buffer.IsAuthed)
                 return;
@@ -139,9 +136,9 @@ namespace Oxide.Plugins
 
                 ["Authorized.BadPassword"] = "Вы ввели Authorized.BadPassword, попробуйте ещё раз!" +
                                              "Команда авторизации: auth <ваш пароль>",
-                ["Registration.Need"] = "Создать пароль",
-                ["Authorized.Need"] = "Авторизироваться",
-                ["Help.Info"] = "Вся  находится в консоле",
+                ["Registration.Need"] = "Registration.Need",
+                ["Authorized.Need"] = "Authorized.Need",
+                ["Help.Info"] = "Вся Help.Infoрмация находится в консоле",
 
                 ["Help.Registration"] =
                     "Приветствую! Чтобы зарегистрироваться - придумай и впиши пароль в консоль!\n" +
@@ -455,7 +452,7 @@ namespace Oxide.Plugins
                 return true;
             }
 
-            if (NoSteamHelper.Call("IsPlayerNoSteam", player.userID) == null)
+            if (NoSteamHelper.Call("IsPlayerNoSteam") == null)
             {
                 ListSteamPlayers.Add(player.userID);
                 return true;

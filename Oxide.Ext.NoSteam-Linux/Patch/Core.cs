@@ -190,9 +190,6 @@ namespace Oxide.Ext.NoSteam_Linux.Patch
                         CRC32 crc = new CRC32();
                         crc.SlurpBlock(array, 0, array.Length);
                         _assemblyHash = crc.Crc32Result.ToString("x");
-                        var field = typeof(ServerMgr).GetRuntimeFields().Single(x => x.Name == "_AssemblyHash");
-                        ServerMgr serverMgr = new ServerMgr();
-                        field.SetValue(serverMgr, _assemblyHash);
                     }
                     else
                     {

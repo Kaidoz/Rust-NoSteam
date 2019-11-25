@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using Facepunch;
 using Facepunch.Math;
-using Harmony;
 using Ionic.Crc;
 using Network;
 using Oxide.Core;
@@ -13,6 +12,7 @@ using Oxide.Ext.NoSteam.Helper;
 using Rust;
 using Steamworks;
 using UnityEngine;
+using HarmonyInstance = Harmony.HarmonyInstance;
 using LogType = Oxide.Core.Logging.LogType;
 
 namespace Oxide.Ext.NoSteam.Patch
@@ -190,9 +190,6 @@ namespace Oxide.Ext.NoSteam.Patch
                         CRC32 crc = new CRC32();
                         crc.SlurpBlock(array, 0, array.Length);
                         _assemblyHash = crc.Crc32Result.ToString("x");
-                        var field = typeof(ServerMgr).GetRuntimeFields().Single(x => x.Name == "_AssemblyHash");
-                        ServerMgr serverMgr = new ServerMgr();
-                        field.SetValue(serverMgr, _assemblyHash);
                     }
                     else
                     {
