@@ -228,7 +228,7 @@ namespace Oxide.Ext.NoSteam.Patch
                 return true;
             }
             return false;
-        }
+        } 
 
         public static void Output(string text)
         {
