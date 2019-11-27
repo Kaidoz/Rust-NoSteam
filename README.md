@@ -44,3 +44,7 @@ object CanNewConnection(Connection connection, bool isSteam)
   return null;
 }
 ```
+
+### Credits
+
+[Harmony](https://github.com/pardeike/Harmony) patcher used in the project
