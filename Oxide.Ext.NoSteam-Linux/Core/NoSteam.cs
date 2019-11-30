@@ -40,7 +40,7 @@ namespace Oxide.Ext.NoSteam_Linux.Core
 
         public static void Output(string text)
         {
-            Interface.Oxide.RootLogger.Write(LogType.Info, "[NoSteam] " + text);
+            Interface.Oxide.RootLogger.Write(LogType.Info, text);
         }
     }
 }
