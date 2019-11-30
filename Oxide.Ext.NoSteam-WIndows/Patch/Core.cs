@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -54,6 +55,19 @@ namespace Oxide.Ext.NoSteam.Patch
             }
         }
 
+        [Harmony.HarmonyPatch(typeof(SteamInventory), "UpdateSteamInventory")]
+        class SteamInventoryPatch
+        {
+            [Harmony.HarmonyPrefix]
+            static bool Prefix(BaseEntity.RPCMessage msg)
+            {
+                if (ShouldIgnore(msg.connection))
+                    return false;
+
+                return true;
+            }
+        }
+
         [Harmony.HarmonyPatch(typeof(EACServer))]
         [Harmony.HarmonyPatch("ShouldIgnore")]
         class EACServerPatch
@@ -89,6 +103,43 @@ namespace Oxide.Ext.NoSteam.Patch
                 }
 
                 return true;
+            }
+        }
+
+        [Harmony.HarmonyPatch(typeof(ConVar.Server))]
+        [Harmony.HarmonyPatch("cheatreport")]
+        class ConvarPatch
+        {
+            [Harmony.HarmonyPrefix]
+            static bool Prefix(ConsoleSystem.Arg arg)
+            {
+                BasePlayer basePlayer = arg.Player();
+                if (basePlayer == null)
+                    return false;
+
+                ulong @uint = arg.GetUInt64(0, 0UL);
+                var player = BasePlayer.FindByID(@uint);
+
+                if (player == null)
+                    return false;
+
+                if (ShouldIgnore(player.Connection) || ShouldIgnore(basePlayer.Connection))
+                    return false;
+
+                return true;
+            }
+        }
+
+        [Harmony.HarmonyPatch(typeof(ServerMgr))]
+        [Harmony.HarmonyPatch("get_AvailableSlots")]
+        class ServerPatch3
+        {
+            [Harmony.HarmonyPrefix]
+            static bool Prefix(ref int __result)
+            {
+                __result = ConVar.Server.maxplayers - CountSteamPlayer();
+
+                return false;
             }
         }
 
@@ -228,7 +279,7 @@ namespace Oxide.Ext.NoSteam.Patch
                 return true;
             }
             return false;
-        } 
+        }
 
         public static void Output(string text)
         {
