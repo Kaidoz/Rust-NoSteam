@@ -40,7 +40,11 @@ Returning a non-null value kick player with reason as value.
 object CanNewConnection(Connection connection, bool isSteam)
 {
   string status = isSteam ? "steam" : "nosteam";
-  Puts($"{connection.userid} is {status} players");
+  Puts($"{connection.userid} is {status} player");
   return null;
 }
 ```
+
+### Credits
+
+[Harmony](https://github.com/pardeike/Harmony) patcher used in the project
