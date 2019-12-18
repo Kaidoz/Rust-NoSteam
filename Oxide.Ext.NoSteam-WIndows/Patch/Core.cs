@@ -148,7 +148,7 @@ namespace Oxide.Ext.NoSteam.Patch
         class ServerMgrPatch
         {
             [Harmony.HarmonyPrefix]
-            static bool Prefix()
+            static bool Prefix(ServerMgr serverMgr)
             {
                 if (!SteamServer.IsValid)
                 {
@@ -161,31 +161,29 @@ namespace Oxide.Ext.NoSteam.Patch
                     SteamServer.Passworded = false;
                     SteamServer.MapName = global::World.Name;
                     string text = "stok";
+                    if (serverMgr.Restarting)
+                    {
+                        text = "strst";
+                    }
                     string text2 = string.Format("born{0}", Epoch.FromDateTime(global::SaveRestore.SaveCreatedTime));
                     string text3 = string.Format("gm{0}", global::ServerMgr.GamemodeName());
                     SteamServer.GameTags = string.Format("mp{0},cp{1},qp{5},v{2}{3},h{4},{6},{7},{8}", new object[]
                     {
                 ConVar.Server.maxplayers,
-                CountSteamPlayer(),
+                global::BasePlayer.activePlayerList.Count,
                 typeof(Protocol).GetFields().Single(x => x.Name == "network").GetRawConstantValue(),
                 ConVar.Server.pve ? ",pve" : string.Empty,
                 AssemblyHash,
-                global::SingletonComponent<global::ServerMgr>.Instance.connectionQueue.Queued,
+                SingletonComponent<global::ServerMgr>.Instance.connectionQueue.Queued,
                 text,
                 text2,
                 text3
                     });
-                    SteamServer.GameTags += ",oxide";
-                    if (Interface.Oxide.Config.Options.Modded)
-                    {
-                        SteamServer.GameTags += ",modded";
-                    }
                     Interface.CallHook("IOnUpdateServerInformation");
                     if (ConVar.Server.description != null && ConVar.Server.description.Length > 100)
                     {
                         string[] array = ConVar.Server.description.SplitToChunks(100).ToArray<string>();
-                        Interface.CallHook("IOnUpdateServerDescription"); 
-                        SteamServer.SetKey("description_0", string.Empty);
+                        Interface.CallHook("IOnUpdateServerDescription");
                         for (int i = 0; i < 16; i++)
                         {
                             if (i < array.Length)
