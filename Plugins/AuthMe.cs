@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.IO;
 using Newtonsoft.Json;
 using Oxide.Core;
 using Oxide.Core.Plugins;
@@ -462,6 +463,25 @@ namespace Oxide.Plugins
             }
 
             return false;
+        }
+
+        private StreamReader dd;
+
+        private void DoSomething()
+        {
+            DoAction(() =>
+            {
+                // обращение к dd
+            });
+            
+        }
+
+        private void DoAction(Action action)
+        {
+            using (dd = new StreamReader(""))
+            {
+                action.Invoke();
+            }
         }
 
         #endregion

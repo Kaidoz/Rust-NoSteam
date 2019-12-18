@@ -154,7 +154,7 @@ namespace Oxide.Ext.NoSteam_Linux.Patch
                 {
                     return false;
                 }
-                using (TimeWarning.New("UpdateServerInformation", 0.1f))
+                using (TimeWarning.New("UpdateServerInformation", 0))
                 {
                     SteamServer.ServerName = ConVar.Server.hostname;
                     SteamServer.MaxPlayers = ConVar.Server.maxplayers;
@@ -180,9 +180,11 @@ namespace Oxide.Ext.NoSteam_Linux.Patch
                     {
                         SteamServer.GameTags += ",modded";
                     }
+                    Interface.CallHook("IOnUpdateServerInformation");
                     if (ConVar.Server.description != null && ConVar.Server.description.Length > 100)
                     {
                         string[] array = ConVar.Server.description.SplitToChunks(100).ToArray<string>();
+                        Interface.CallHook("IOnUpdateServerDescription");
                         SteamServer.SetKey("description_0", string.Empty);
                         for (int i = 0; i < 16; i++)
                         {
