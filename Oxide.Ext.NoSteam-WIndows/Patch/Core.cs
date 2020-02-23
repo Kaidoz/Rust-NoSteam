@@ -3,6 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using EasyAntiCheat.Server.Hydra;
+using EasyAntiCheat.Server.Legacy;
 using Facepunch;
 using Facepunch.Math;
 using Ionic.Crc;
@@ -13,6 +15,7 @@ using Oxide.Ext.NoSteam.Helper;
 using Rust;
 using Steamworks;
 using UnityEngine;
+using static Harmony.AccessTools;
 using HarmonyInstance = Harmony.HarmonyInstance;
 using LogType = Oxide.Core.Logging.LogType;
 
@@ -20,15 +23,26 @@ namespace Oxide.Ext.NoSteam.Patch
 {
     class Core
     {
+        private static MethodInfo OnAuthenticatedLocal;
+
+        private static MethodInfo OnAuthenticatedRemote;
+
         public static void Do()
         {
+            ParseMethods();
             DoPatch();
         }
 
         public static void DoPatch()
         {
-            var harmony = HarmonyInstance.Create("com.github.harmony.rust");
+            var harmony = HarmonyInstance.Create("com.github.harmony.rust.exp");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+        }
+
+        private static void ParseMethods()
+        {
+            OnAuthenticatedLocal = typeof(EACServer).GetMethod("OnAuthenticatedLocal", BindingFlags.Static | BindingFlags.NonPublic);
+            OnAuthenticatedRemote = typeof(EACServer).GetMethod("OnAuthenticatedRemote", BindingFlags.Static | BindingFlags.NonPublic);
         }
 
         [Harmony.HarmonyPatch(typeof(ConnectionAuth))]
@@ -59,7 +73,7 @@ namespace Oxide.Ext.NoSteam.Patch
         class SteamInventoryPatch
         {
             [Harmony.HarmonyPrefix]
-            static bool Prefix(BaseEntity.RPCMessage msg)
+            public static bool Prefix(BaseEntity.RPCMessage msg)
             {
                 if (ShouldIgnore(msg.connection))
                     return false;
@@ -69,19 +83,18 @@ namespace Oxide.Ext.NoSteam.Patch
         }
 
         [Harmony.HarmonyPatch(typeof(EACServer))]
-        [Harmony.HarmonyPatch("ShouldIgnore")]
-        class EACServerPatch
+        [Harmony.HarmonyPatch("OnJoinGame")]
+        class Patch01
         {
-            [Harmony.HarmonyPrefix]
-            static bool Prefix(Connection connection, ref bool __result)
+            static bool Prefix(Connection connection)
             {
-                __result = false;
-                if (!ConVar.Server.secure || connection.authLevel >= 3u || ShouldIgnore(connection))
+                if (ShouldIgnore(connection))
                 {
-                    __result = true;
+                    OnAuthenticatedLocal.Invoke(null, new object[] { connection });
+                    OnAuthenticatedRemote.Invoke(null, new object[] { connection });
+                    return false;
                 }
-
-                return false;
+                return true;
             }
         }
 
@@ -148,7 +161,7 @@ namespace Oxide.Ext.NoSteam.Patch
         class ServerMgrPatch
         {
             [Harmony.HarmonyPrefix]
-            static bool Prefix(ServerMgr serverMgr)
+            static bool Prefix()
             {
                 if (!SteamServer.IsValid)
                 {
@@ -161,24 +174,26 @@ namespace Oxide.Ext.NoSteam.Patch
                     SteamServer.Passworded = false;
                     SteamServer.MapName = global::World.Name;
                     string text = "stok";
-                    if (serverMgr.Restarting)
-                    {
-                        text = "strst";
-                    }
                     string text2 = string.Format("born{0}", Epoch.FromDateTime(global::SaveRestore.SaveCreatedTime));
                     string text3 = string.Format("gm{0}", global::ServerMgr.GamemodeName());
+                    string countOnline = Interface.CallHook("IsShowCracked") == null ? Core.CountSteamPlayer().ToString() : BasePlayer.activePlayerList.Count.ToString();
                     SteamServer.GameTags = string.Format("mp{0},cp{1},qp{5},v{2}{3},h{4},{6},{7},{8}", new object[]
                     {
-                ConVar.Server.maxplayers,
-                global::BasePlayer.activePlayerList.Count,
-                typeof(Protocol).GetFields().Single(x => x.Name == "network").GetRawConstantValue(),
-                ConVar.Server.pve ? ",pve" : string.Empty,
-                AssemblyHash,
-                SingletonComponent<global::ServerMgr>.Instance.connectionQueue.Queued,
-                text,
-                text2,
-                text3
+                        ConVar.Server.maxplayers,
+                        countOnline,
+                        typeof(Protocol).GetFields().Single(x => x.Name == "network").GetRawConstantValue(),
+                        ConVar.Server.pve ? ",pve" : string.Empty,
+                        AssemblyHash,
+                        SingletonComponent<global::ServerMgr>.Instance.connectionQueue.Queued,
+                        text,
+                        text2,
+                        text3
                     });
+                    object result = Interface.CallHook("OnGameTags", SteamServer.GameTags, countOnline);
+                    if (result != null)
+                    {
+                        SteamServer.GameTags = result.ToString();
+                    }
                     Interface.CallHook("IOnUpdateServerInformation");
                     if (ConVar.Server.description != null && ConVar.Server.description.Length > 100)
                     {
@@ -254,6 +269,7 @@ namespace Oxide.Ext.NoSteam.Patch
         private static int CountSteamPlayer()
         {
             int count = 0;
+            //BasePlayer.activePlayerList.Count
             foreach (var player in BasePlayer.activePlayerList)
             {
                 SteamTicket steamTicket = new SteamTicket(player.Connection);
@@ -279,11 +295,6 @@ namespace Oxide.Ext.NoSteam.Patch
                 return true;
             }
             return false;
-        }
-
-        public static void Output(string text)
-        {
-            Interface.Oxide.RootLogger.Write(LogType.Info, "[NoSteam] " + text);
         }
     }
 }

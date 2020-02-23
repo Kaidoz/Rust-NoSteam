@@ -39,13 +39,13 @@
       <HintPath>..\packages\Lib.Harmony.1.2.0.1\lib\net45\0Harmony.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp">
+    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Assembly-CSharp.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass">
+    <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Facepunch.Console">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Console.dll</HintPath>
@@ -79,9 +79,9 @@
       <HintPath>C:\Users\Kaidoz\Downloads\Managed(7)\Managed\Facepunch.Steamworks.Posix64.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Facepunch.System">
-      <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.System.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Facepunch.System, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Users\Kaidoz\Downloads\Managed203\Managed\Facepunch.System.dll</HintPath>
     </Reference>
     <Reference Include="Facepunch.Unity">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Unity.dll</HintPath>

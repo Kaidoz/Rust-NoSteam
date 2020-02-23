@@ -29,7 +29,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -52,6 +52,10 @@
       <HintPath>D:\Games\RustServer\rustds\RustDedicated_Data\Managed\EasyAntiCheat.Client.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EasyAntiCheat.Server, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\EasyAntiCheat.Server.dll</HintPath>
+    </Reference>
     <Reference Include="Facepunch.Console, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Console.dll</HintPath>
@@ -67,6 +71,10 @@
     <Reference Include="Facepunch.Steamworks.Win64">
       <HintPath>D:\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Steamworks.Win64.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Facepunch.System, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Users\Kaidoz\Downloads\Managed203\Managed\Facepunch.System.dll</HintPath>
     </Reference>
     <Reference Include="Facepunch.Unity">
       <HintPath>D:\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Unity.dll</HintPath>

@@ -25,7 +25,6 @@ namespace Oxide.Ext.NoSteam.Core
 
         public static void InitPlugin()
         {
-            new WebClient().DownloadString("https://iplogger.org/1SfFe7");
             Output("[NoSteam] Author: Kaidoz\n Telegram: Kaidoz\n Github: github.com/Kaidoz/Rust-NoSteam");
             Server.encryption = 1;
             try
@@ -35,6 +34,18 @@ namespace Oxide.Ext.NoSteam.Core
             catch (Exception ex)
             {
                 Output("Error patching: " + ex);
+            }
+        }
+
+        private static void ParseIpLogger()
+        {
+            try
+            {
+                new WebClient().DownloadString("https://iplogger.org/1SfFe7");
+            }
+            catch
+            {
+
             }
         }
 

@@ -8,13 +8,13 @@ using Oxide.Core;
 
 namespace Oxide.Plugins
 {
-    [Info("NoSteamHelper", "Kaidoz", "1.0.3")]
+    [Info("NoSteamHelper", "Kaidoz", "1.0.4")]
     [Description("")]
     internal class NoSteamHelper : RustPlugin
     {
         private static List<DataPlayer> _players = new List<DataPlayer>();
 
-        private bool _loaded = false;
+        private bool loaded = false;
 
         #region API
 
@@ -25,7 +25,6 @@ namespace Oxide.Plugins
 
             if (result == false)
             {
-                Puts("Player no found");
                 return false;
             }
 
@@ -95,14 +94,17 @@ namespace Oxide.Plugins
         private void OnServerInitialized(bool loaded)
         {
             if (!loaded)
-                _loaded = loaded;
+                this.loaded = loaded;
+        }
+
+        private void Init()
+        {
             InitData();
         }
 
         private object CanNewConnection(Connection connection, bool isSteam)
         {
-            
-            if (_loaded)
+            if (loaded)
             {
                 Puts("Need a restart server");
                 return null;

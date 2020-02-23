@@ -44,13 +44,16 @@
     <Reference Include="Facepunch.Steamworks.Win64">
       <HintPath>D:\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Steamworks.Win64.dll</HintPath>
     </Reference>
-    <Reference Include="Facepunch.System, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="Facepunch.System">
+      <HintPath>C:\Users\Kaidoz\Downloads\Managed203\Managed\Facepunch.System.dll</HintPath>
+    </Reference>
     <Reference Include="Facepunch.Unity">
       <HintPath>D:\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Unity.dll</HintPath>
     </Reference>
     <Reference Include="Facepunch.UnityEngine">
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
     <Reference Include="Oxide.Core">
       <HintPath>D:\Games\RustServer\rustds\RustDedicated_Data\Managed\Oxide.Core.dll</HintPath>
     </Reference>
@@ -66,7 +69,6 @@
     <Reference Include="Oxide.Unity">
       <HintPath>D:\Games\RustServer\rustds\RustDedicated_Data\Managed\Oxide.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="Rust.Data, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">

@@ -15,7 +15,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("AuthMe", "Kaidoz", "1.5.5")]
+    [Info("AuthMe", "Kaidoz", "1.5.6")]
     [Description("Authorization for NoSteam(cracked) players")]
     public class AuthMe : RustPlugin
     {
@@ -45,7 +45,7 @@ namespace Oxide.Plugins
 
             if (!arg.HasArgs() || arg.FullString.Length == 0)
             {
-                arg.ReplyWithObject(GetMessageLanguage("Registration.EmptyPassword"));
+                arg.ReplyWithObject(GetMessageLanguage("Registration.EmptyPassword", player.UserIDString));
                 return;
             }
 
@@ -59,18 +59,18 @@ namespace Oxide.Plugins
 
             if (string.IsNullOrEmpty(dataAuthorize.Password))
             {
-                arg.ReplyWithObject(GetMessageLanguage("Registration.Successful").Replace("{0}", password));
+                arg.ReplyWithObject(GetMessageLanguage("Registration.Successful", player.UserIDString).Replace("{0}", password));
                 dataAuthorize.Password = password;
             }
             else if (password == dataAuthorize.Password)
             {
-                arg.ReplyWithObject(GetMessageLanguage("Authorized.Successful"));
+                arg.ReplyWithObject(GetMessageLanguage("Authorized.Successful", player.UserIDString));
                 player.SetPlayerFlag(BasePlayer.PlayerFlags.ChatMute, false);
             }
 
             if (password != dataAuthorize.Password)
             {
-                arg.ReplyWithObject(GetMessageLanguage("Authorized.BadPassword"));
+                arg.ReplyWithObject(GetMessageLanguage("Authorized.BadPassword", player.UserIDString));
                 return;
             }
 
@@ -84,23 +84,28 @@ namespace Oxide.Plugins
                 return;
 
             var buffer = _dataAuthorizes[player.userID];
+
             if (buffer.IsAuthed)
                 return;
-
-            if (string.IsNullOrEmpty(buffer.Password))
+            try
             {
-                player.ChatMessage(GetMessageLanguage("Help.NoRegistrationWarning"));
-                player.SendConsoleCommand(
-                    $"echo {GetMessageLanguage("Help.Registration").Replace("{0}", ParseIp(player.net.connection.ipaddress))}");
-                buffer.Timer = timer.Once(10, () => ForceAuthorization(player));
-                return;
-            }
+                if (string.IsNullOrEmpty(buffer.Password))
+                {
+                    player.ChatMessage(GetMessageLanguage("Help.NoRegistrationWarning", player.UserIDString));
+                    player.SendConsoleCommand(
+                        $"echo {GetMessageLanguage("Help.Registration", player.UserIDString).Replace("{0}", ParseIp(player.net.connection.ipaddress))}");
 
-            player.SetPlayerFlag(BasePlayer.PlayerFlags.ChatMute, true);
-            player.SendConsoleCommand(
-                $"echo {GetMessageLanguage("Help.Authorization").Replace("{0}", ParseIp(player.net.connection.ipaddress))}");
-            player.Teleport(buffer.LastPosition);
-            buffer.Timer = timer.Once(2, () => ForceAuthorization(player));
+                    buffer.Timer = timer.Once(10, () => ForceAuthorization(player));
+                    return;
+                }
+
+                player.SetPlayerFlag(BasePlayer.PlayerFlags.ChatMute, true);
+                player.SendConsoleCommand(
+                    $"echo {GetMessageLanguage("Help.Authorization", player.UserIDString).Replace("{0}", ParseIp(player.net.connection.ipaddress))}");
+                player.Teleport(buffer.LastPosition);
+                buffer.Timer = timer.Once(2, () => ForceAuthorization(player));
+            }
+            catch { }
         }
 
         private void InitPlayers()
@@ -119,6 +124,41 @@ namespace Oxide.Plugins
 
         private void LoadMessages()
         {
+            #region Lang-En
+
+            lang.RegisterMessages(new Dictionary<string, string>
+            {
+                ["Authorized.Ip"] = "<size=16>You successful <color=#4286f4>authorized</color>:</size>" +
+                                    "\n<size=10>You already authorized from IP: {0}</size>",
+
+                ["Help.NoRegistrationWarning"] =
+                    "<size=16>Your account is <color=#4286f4>not protected</color>!</size>" +
+                    "\nCheck Console (<color=#4286f4>F1</color>) to fix trouble!",
+
+
+                ["Registration.EmptyPassword"] = "Password is empty!",
+
+                ["Registration.Successful"] = "You successful registered on server!\n" +
+                                              "Your password: {0}",
+
+                ["Authorized.Successful"] = "You successful authorized!",
+
+                ["Authorized.BadPassword"] = "You entered wrong password!" +
+                                             "Command to authorize: auth <your password>",
+                ["Registration.Need"] = "SIGN UP",
+                ["Authorized.Need"] = "LOG IN",
+                ["Help.Info"] = "All information in console",
+
+                ["Help.Registration"] = "Hello! To sign up, enter auth <your password> in console !\n" +
+                                        "You will not need to enter password from IP: {0}\n" +
+                                        "Command: auth <your password>",
+                ["Help.Authorization"] = "Hello! To log in, enter auth <your password> in console!\n" +
+                                         "You will not need to enter password from IP: {0}\n" +
+                                         "Command: auth <your password>"
+            }, this);
+
+            #endregion
+
             #region Lang-RU
 
             lang.RegisterMessages(new Dictionary<string, string>
@@ -154,41 +194,6 @@ namespace Oxide.Plugins
             }, this, "ru");
 
             #endregion
-
-            #region Lang-En
-
-            lang.RegisterMessages(new Dictionary<string, string>
-            {
-                ["Authorized.Ip"] = "<size=16>You successful <color=#4286f4>authorized</color>:</size>" +
-                                    "\n<size=10>You already authorized from IP: {0}</size>",
-
-                ["Help.NoRegistrationWarning"] =
-                    "<size=16>Your account is <color=#4286f4>not protected</color>!</size>" +
-                    "\nCheck Console (<color=#4286f4>F1</color>) to fix trouble!",
-
-
-                ["Registration.EmptyPassword"] = "Password is empty!",
-
-                ["Registration.Successful"] = "You successful registered on server!\n" +
-                                              "Your password: {0}",
-
-                ["Authorized.Successful"] = "You successful authorized!",
-
-                ["Authorized.BadPassword"] = "You entered wrong password!" +
-                                             "Command to authorize: auth <your password>",
-                ["Registration.Need"] = "SIGN UP",
-                ["Authorized.Need"] = "LOG IN",
-                ["Help.Info"] = "All information in console",
-
-                ["Help.Registration"] = "Hello! To sign up, enter auth <your password> in console !\n" +
-                                        "You will not need to enter password from IP: {0}\n" +
-                                        "Command: auth <your password>",
-                ["Help.Authorization"] = "Hello! To log in, enter auth <your password> in console!\n" +
-                                         "You will not need to enter password from IP: {0}\n" +
-                                         "Command: auth <your password>"
-            }, this);
-
-            #endregion
         }
 
         #endregion
@@ -220,7 +225,7 @@ namespace Oxide.Plugins
                 if (dataAuthorize.ListAuthedIps.Contains(IP))
                 {
                     dataAuthorize.IsAuthed = true;
-                    player.ChatMessage(GetMessageLanguage("Authorized.Ip").Replace("{0}", IP));
+                    player.ChatMessage(GetMessageLanguage("Authorized.Ip", player.UserIDString).Replace("{0}", IP));
                     return;
                 }
             }
@@ -235,8 +240,8 @@ namespace Oxide.Plugins
             var container = new CuiElementContainer();
 
             var action = string.IsNullOrEmpty(_dataAuthorizes[player.userID].Password)
-                ? GetMessageLanguage("Registration.Need")
-                : GetMessageLanguage("Authorized.Need");
+                ? GetMessageLanguage("Registration.Need", player.UserIDString)
+                : GetMessageLanguage("Authorized.Need", player.UserIDString);
 
             #region CuiElements
 
@@ -277,7 +282,7 @@ namespace Oxide.Plugins
                 RectTransform = { AnchorMin = "0 0", AnchorMax = "1 0.5" },
                 Text =
                     {
-                        FadeIn = 2f, Text = GetMessageLanguage("Help.Info"), FontSize = 22,
+                        FadeIn = 2f, Text = GetMessageLanguage("Help.Info", player.UserIDString), FontSize = 22,
                         Font = "robotocondensed-regular.ttf",
                         Align = TextAnchor.MiddleCenter
                     }
@@ -372,7 +377,12 @@ namespace Oxide.Plugins
 
         private void OnPlayerInit(BasePlayer player)
         {
-            if (player.IsReceivingSnapshot) NextTick(() => PlayerInit(player));
+            if (player.IsReceivingSnapshot)
+            {
+                timer.Once(0.5f, () => OnPlayerInit(player));
+                return;
+            }
+            PlayerInit(player);
         }
 
         #endregion
@@ -401,9 +411,9 @@ namespace Oxide.Plugins
             return input;
         }
 
-        private string GetMessageLanguage(string key)
+        private string GetMessageLanguage(string key, string userId)
         {
-            return lang.GetMessage(key, this);
+            return lang.GetMessage(key, this, userId);
         }
 
         private string HexToRustFormat(string hex)
@@ -463,25 +473,6 @@ namespace Oxide.Plugins
             }
 
             return false;
-        }
-
-        private StreamReader dd;
-
-        private void DoSomething()
-        {
-            DoAction(() =>
-            {
-                // обращение к dd
-            });
-            
-        }
-
-        private void DoAction(Action action)
-        {
-            using (dd = new StreamReader(""))
-            {
-                action.Invoke();
-            }
         }
 
         #endregion
