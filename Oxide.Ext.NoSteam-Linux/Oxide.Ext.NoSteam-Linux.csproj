@@ -39,6 +39,19 @@
       <HintPath>..\packages\Lib.Harmony.1.2.0.1\lib\net45\0Harmony.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Accessibility" />
+    <Reference Include="ApexAI, Version=1.0.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\ApexAI.dll</HintPath>
+    </Reference>
+    <Reference Include="ApexSerialization, Version=1.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\ApexSerialization.dll</HintPath>
+    </Reference>
+    <Reference Include="ApexShared, Version=1.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\ApexShared.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Assembly-CSharp.dll</HintPath>
@@ -47,61 +60,114 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="Facepunch.Console">
+    <Reference Include="Facepunch.Console, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Console.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="Facepunch.Input">
+    <Reference Include="Facepunch.GoogleSheets">
+      <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.GoogleSheets.dll</HintPath>
+    </Reference>
+    <Reference Include="Facepunch.Input, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Input.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="Facepunch.Network">
+    <Reference Include="Facepunch.Network, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Network.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="Facepunch.Raknet">
+    <Reference Include="Facepunch.Raknet, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Raknet.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="Facepunch.Rcon">
+    <Reference Include="Facepunch.Rcon, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Rcon.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="Facepunch.Skeleton">
+    <Reference Include="Facepunch.Skeleton, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Skeleton.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="Facepunch.Sqlite">
+    <Reference Include="Facepunch.Sqlite, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Sqlite.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="Facepunch.Steamworks.Posix64">
-      <HintPath>C:\Users\Kaidoz\Downloads\Managed(7)\Managed\Facepunch.Steamworks.Posix64.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Facepunch.Steamworks.Posix">
+      <HintPath>C:\Users\Kaidoz\Downloads\Facepunch.Steamworks.2.3.2\Facepunch.Steamworks.Posix.dll</HintPath>
     </Reference>
     <Reference Include="Facepunch.System, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>C:\Users\Kaidoz\Downloads\Managed203\Managed\Facepunch.System.dll</HintPath>
+      <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.System.dll</HintPath>
     </Reference>
-    <Reference Include="Facepunch.Unity">
+    <Reference Include="Facepunch.Unity, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.Unity.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="Facepunch.UnityEngine">
+    <Reference Include="Facepunch.UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Facepunch.UnityEngine.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="Ionic.Zip.Reduced">
+    <Reference Include="Ionic.Zip.Reduced, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Ionic.Zip.Reduced.dll</HintPath>
-      <Private>True</Private>
     </Reference>
-    <Reference Include="Oxide.Core">
-      <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Oxide.Core.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\netstandard\v4.0_2.0.0.0__cc7b13ffcd2ddd51\netstandard.dll</HintPath>
     </Reference>
-    <Reference Include="Rust.Global">
+    <Reference Include="NewAssembly, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Users\Kaidoz\Downloads\Oxide.Rust-linux(2)\RustDedicated_Data\Managed\NewAssembly.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Core, Version=2.0.3972.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Users\Kaidoz\Downloads\Oxide.Rust-linux(2)\RustDedicated_Data\Managed\Oxide.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.CSharp">
+      <HintPath>C:\Users\Kaidoz\Downloads\Oxide.Rust-linux(2)\RustDedicated_Data\Managed\Oxide.CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.MySql">
+      <HintPath>C:\Users\Kaidoz\Downloads\Oxide.Rust-linux(2)\RustDedicated_Data\Managed\Oxide.MySql.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.References, Version=2.0.3765.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Users\Kaidoz\Downloads\Oxide.Rust-linux(2)\RustDedicated_Data\Managed\Oxide.References.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Rust">
+      <HintPath>C:\Users\Kaidoz\Downloads\Oxide.Rust-linux(2)\RustDedicated_Data\Managed\Oxide.Rust.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.SQLite">
+      <HintPath>C:\Users\Kaidoz\Downloads\Oxide.Rust-linux(2)\RustDedicated_Data\Managed\Oxide.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.Unity">
+      <HintPath>C:\Users\Kaidoz\Downloads\Oxide.Rust-linux(2)\RustDedicated_Data\Managed\Oxide.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Rust.Data, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Rust.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Rust.Demo, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Rust.Demo.dll</HintPath>
+    </Reference>
+    <Reference Include="Rust.Global, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Rust.Global.dll</HintPath>
-      <Private>True</Private>
+    </Reference>
+    <Reference Include="Rust.Localization, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Rust.Localization.dll</HintPath>
+    </Reference>
+    <Reference Include="Rust.UI, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Rust.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="Rust.Workshop, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Rust.Workshop.dll</HintPath>
+    </Reference>
+    <Reference Include="Rust.World, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\Rust.World.dll</HintPath>
     </Reference>
     <Reference Include="System">
       <Private>True</Private>
@@ -115,10 +181,7 @@
     <Reference Include="System.Xml">
       <Private>True</Private>
     </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\NoSteam.cs" />

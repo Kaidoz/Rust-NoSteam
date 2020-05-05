@@ -174,10 +174,11 @@ namespace Oxide.Ext.NoSteam_Linux.Patch
                     string text = "stok";
                     string text2 = string.Format("born{0}", Epoch.FromDateTime(global::SaveRestore.SaveCreatedTime));
                     string text3 = string.Format("gm{0}", global::ServerMgr.GamemodeName());
+                    int countOnline = Interface.CallHook("IsShowCracked") == null ? Core.CountSteamPlayer() : BasePlayer.activePlayerList.Count;
                     SteamServer.GameTags = string.Format("mp{0},cp{1},qp{5},v{2}{3},h{4},{6},{7},{8}", new object[]
                     {
                         ConVar.Server.maxplayers,
-                        Core.CountSteamPlayer(),
+                        countOnline,
                         typeof(Protocol).GetFields().Single(x => x.Name == "network").GetRawConstantValue(),
                         ConVar.Server.pve ? ",pve" : string.Empty,
                         AssemblyHash,
