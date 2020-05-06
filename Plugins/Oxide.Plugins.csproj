@@ -94,7 +94,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AntiBotsProtector.cs" />
     <Compile Include="AuthMe.cs" />
     <Compile Include="NoSteamHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

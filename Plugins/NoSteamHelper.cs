@@ -112,6 +112,9 @@ namespace Oxide.Plugins
 
             DataPlayer dataPlayer;
 
+            if(!CheckIsValidPlayer(connection))
+                return "Steam Auth Failed.";
+
             var result = DataPlayer.FindPlayer(connection.userid, out dataPlayer);
             if (result)
             {
@@ -126,6 +129,20 @@ namespace Oxide.Plugins
 
             DataPlayer.AddPlayer(connection.userid, isSteam);
             return null;
+        }
+
+        private bool CheckIsValidPlayer(Connection connection)
+        {
+            foreach (var player in BasePlayer.activePlayerList)
+            {
+                if (player.Connection.ipaddress == connection.ipaddress)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+
         }
 
         #endregion
