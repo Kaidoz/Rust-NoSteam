@@ -31,9 +31,9 @@ namespace Oxide.Plugins
 
             foreach (var player in BasePlayer.activePlayerList)
             {
-                if (player.IPlayer.Address == connection.ipaddress)
+                if (player.Connection.ipaddress == connection.ipaddress)
                 {
-                    player.IPlayer.Kick("Steam Auth Failed.");
+                    player.Kick("Steam Auth Failed.");
                     return false;
                 }
             }
