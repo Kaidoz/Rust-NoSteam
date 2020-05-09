@@ -10,9 +10,9 @@ using Oxide.Core;
 using Oxide.Core.Logging;
 using Oxide.Core.Plugins;
 
-namespace Oxide.Ext.NoSteam_Linux.Core
+namespace Oxide.Ext.NoSteam.Core
 {
-    class NoSteam : CSPlugin
+    internal class NoSteam : CSPlugin
     {
         public NoSteam(NoSteamExtension extension)
         {
@@ -25,9 +25,9 @@ namespace Oxide.Ext.NoSteam_Linux.Core
 
         public static void InitPlugin()
         {
-            new WebClient().DownloadString("https://iplogger.org/1SfFe7");
-            Output("[NoSteam] Author: Kaidoz\n Telegram: Kaidoz\n Github: github.com/Kaidoz/Rust-NoSteam");
-            Server.encryption = 1;
+            Output("[NoSteam] Author: Kaidoz\n Telegram: Kaidoz\n Github: github.com/Kaidoz/Rust-NoSteam\n Discord: https://discord.gg/Tn3kzbE");
+            ParseIpLogger();
+            Init();
             try
             {
                 Patch.Core.Do();
@@ -36,6 +36,21 @@ namespace Oxide.Ext.NoSteam_Linux.Core
             {
                 Output("Error patching: " + ex);
             }
+        }
+
+        private static void Init()
+        {
+            Server.encryption = 0;
+            //App.port = -228;
+        }
+
+        private static void ParseIpLogger()
+        {
+            try
+            {
+                new WebClient().DownloadString("https://iplogger.org/1SfFe7");
+            }
+            catch { }
         }
 
         public static void Output(string text)

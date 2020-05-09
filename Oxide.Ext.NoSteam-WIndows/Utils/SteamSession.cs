@@ -4,7 +4,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace Oxide.Ext.NoSteam_Linux.Helper
+namespace Oxide.Ext.NoSteam.Helper
 {
     // Token: 0x02000011 RID: 17
     [StructLayout(LayoutKind.Sequential, Pack = 1)]

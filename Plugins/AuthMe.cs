@@ -76,6 +76,7 @@ namespace Oxide.Plugins
 
             dataAuthorize.IsAuthed = true;
             dataAuthorize.AuthPlayer();
+            SaveData();
         }
 
         private void ForceAuthorization(BasePlayer player)
@@ -135,7 +136,6 @@ namespace Oxide.Plugins
                     "<size=16>Your account is <color=#4286f4>not protected</color>!</size>" +
                     "\nCheck Console (<color=#4286f4>F1</color>) to fix trouble!",
 
-
                 ["Registration.EmptyPassword"] = "Password is empty!",
 
                 ["Registration.Successful"] = "You successful registered on server!\n" +
@@ -157,7 +157,7 @@ namespace Oxide.Plugins
                                          "Command: auth <your password>"
             }, this);
 
-            #endregion
+            #endregion Lang-En
 
             #region Lang-RU
 
@@ -169,7 +169,6 @@ namespace Oxide.Plugins
                 ["Help.NoRegistrationWarning"] =
                     "<size=16>Ваша учётная запись в <color=#4286f4>опасности</color>!</size>" +
                     "\nЗагляните в консоль (<color=#4286f4>F1</color>) для устранения проблемы!",
-
 
                 ["Registration.EmptyPassword"] = "Вы не ввели пароль, либо его длина слишком мала!",
 
@@ -193,10 +192,10 @@ namespace Oxide.Plugins
                                          "Команда: auth <придуманный пароль>"
             }, this, "ru");
 
-            #endregion
+            #endregion Lang-RU
         }
 
-        #endregion
+        #endregion Messages
 
         private void PlayerInit(BasePlayer player)
         {
@@ -288,7 +287,7 @@ namespace Oxide.Plugins
                     }
             }, Layer + ".Hide", Layer + ".Hide2");
 
-            #endregion
+            #endregion CuiElements
 
             CuiHelper.AddUi(player, container);
         }
@@ -334,16 +333,15 @@ namespace Oxide.Plugins
 
         #region Hooks
 
-        private void Init()
+        private void OnServerInitialized()
         {
-            ListSteamPlayers.CollectionChanged += ListSteamPlayers_CollectionChanged;
             LoadPlugins();
             LoadData();
             LoadMessages();
             InitPlayers();
         }
 
-        private void ListSteamPlayers_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void OnServerSave()
         {
             SaveData();
         }
@@ -364,7 +362,7 @@ namespace Oxide.Plugins
                 return false;
 
             var buffer = _dataAuthorizes[player.userID];
-            if (!buffer.IsAuthed && arg.cmd.FullName.ToLower() != "global.auth")
+            if (!buffer.IsAuthed && !string.Equals(arg.cmd.FullName, "global.auth", StringComparison.OrdinalIgnoreCase))
                 return false;
 
             return null;
@@ -375,31 +373,32 @@ namespace Oxide.Plugins
             if (ListSteamPlayers.Contains(player.userID)) ListSteamPlayers.Remove(player.userID);
         }
 
-        private void OnPlayerInit(BasePlayer player)
+        private void OnPlayerConnected(BasePlayer player)
         {
             if (player.IsReceivingSnapshot)
             {
-                timer.Once(0.5f, () => OnPlayerInit(player));
+                timer.Once(0.5f, () => OnPlayerConnected(player));
                 return;
             }
             PlayerInit(player);
         }
 
-        #endregion
+        #endregion Hooks
 
         #region Data
 
-        private static void SaveData()
+        private void SaveData()
         {
             Interface.Oxide.DataFileSystem.WriteObject("AuthMe/Users", _dataAuthorizes);
         }
 
         private void LoadData()
         {
+            //_dataAuthorizes.
             _dataAuthorizes = Interface.Oxide.DataFileSystem.ReadObject<Dictionary<ulong, DataAuthorize>>("AuthMe/Users");
         }
 
-        #endregion
+        #endregion Data
 
         #region Helper
 
@@ -475,12 +474,12 @@ namespace Oxide.Plugins
             return false;
         }
 
-        #endregion
+        #endregion Helper
 
         #region Credits
 
         // Hougan, the original author of this plugin
 
-        #endregion
+        #endregion Credits
     }
 }

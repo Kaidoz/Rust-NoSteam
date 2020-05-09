@@ -4,7 +4,7 @@
 
 using System.Runtime.InteropServices;
 
-namespace Oxide.Ext.NoSteam_Linux.Helper
+namespace Oxide.Ext.NoSteam.Helper
 {
     public static class Serilization
     {

@@ -5,11 +5,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0F98BF62-AE33-4CB9-848F-E484A5D7CE63}</ProjectGuid>
+    <ProjectGuid>{AC2E1A54-9FC8-4A08-82B0-AD462C65FCC9}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Oxide.Ext.NoSteam</RootNamespace>
-    <AssemblyName>Oxide.Ext.NoSteam-Windows</AssemblyName>
+    <AssemblyName>Oxide.Ext.NoSteam-Linux</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -20,22 +20,19 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
-    <Optimize>false</Optimize>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -43,22 +40,16 @@
       <HintPath>..\packages\Lib.Harmony.2.2.1\lib\net48\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\..\..\Games\Rust\Server\Oxide.Rust-linux\RustDedicated_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
-    </Reference>
-    <Reference Include="EasyAntiCheat.Client">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\EasyAntiCheat.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="EasyAntiCheat.Server">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\EasyAntiCheat.Server.dll</HintPath>
     </Reference>
     <Reference Include="Facepunch.BurstCloth">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Facepunch.BurstCloth.dll</HintPath>
     </Reference>
     <Reference Include="Facepunch.Console">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Facepunch.Console.dll</HintPath>
+      <HintPath>..\..\..\..\..\Games\Rust\Server\Oxide.Rust-linux\RustDedicated_Data\Managed\Facepunch.Console.dll</HintPath>
     </Reference>
     <Reference Include="Facepunch.GoogleSheets">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Facepunch.GoogleSheets.dll</HintPath>
@@ -67,85 +58,61 @@
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Facepunch.Input.dll</HintPath>
     </Reference>
     <Reference Include="Facepunch.Network">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Facepunch.Network.dll</HintPath>
-    </Reference>
-    <Reference Include="Facepunch.Raknet">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Facepunch.Raknet.dll</HintPath>
+      <HintPath>..\..\..\..\..\Games\Rust\Server\Oxide.Rust-linux\RustDedicated_Data\Managed\Facepunch.Network.dll</HintPath>
     </Reference>
     <Reference Include="Facepunch.Rcon">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Facepunch.Rcon.dll</HintPath>
-    </Reference>
-    <Reference Include="Facepunch.Skeleton">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Facepunch.Skeleton.dll</HintPath>
-    </Reference>
-    <Reference Include="Facepunch.Sqlite">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Facepunch.Sqlite.dll</HintPath>
+      <HintPath>..\..\..\..\..\Games\Rust\Server\Oxide.Rust-linux\RustDedicated_Data\Managed\Facepunch.Rcon.dll</HintPath>
     </Reference>
     <Reference Include="Facepunch.SteamNetworking">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Facepunch.SteamNetworking.dll</HintPath>
     </Reference>
-    <Reference Include="Facepunch.Steamworks.Win64">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Facepunch.Steamworks.Win64.dll</HintPath>
+    <Reference Include="Facepunch.Steamworks.Posix">
+      <HintPath>..\..\..\..\..\Games\Rust\Server\Facepunch.Steamworks.2.3.2(2)\Unity\Facepunch.Steamworks.Posix.dll</HintPath>
     </Reference>
-    <Reference Include="Facepunch.System, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Facepunch.System">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Facepunch.System.dll</HintPath>
     </Reference>
-    <Reference Include="Facepunch.Unity">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Facepunch.Unity.dll</HintPath>
-    </Reference>
     <Reference Include="Facepunch.UnityEngine">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Facepunch.UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="Ionic.Zip.Reduced, Version=1.9.1.8, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Ionic.Zip.Reduced.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Mono.Data.Sqlite">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Mono.Data.Sqlite.dll</HintPath>
+      <HintPath>..\..\..\..\..\Games\Rust\Server\Oxide.Rust-linux\RustDedicated_Data\Managed\Facepunch.UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Data.Tds">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Mono.Data.Tds.dll</HintPath>
+      <HintPath>..\..\..\..\..\Games\Rust\Server\Oxide.Rust-linux\RustDedicated_Data\Managed\Mono.Data.Tds.dll</HintPath>
     </Reference>
-    <Reference Include="netstandard">
-      <HintPath>..\..\..\..\..\Games\RustServer\rustds\RustDedicated_Data\Managed\netstandard.dll</HintPath>
+    <Reference Include="MySql.Data">
+      <HintPath>..\..\..\..\..\Games\Rust\Server\Oxide.Rust-linux\RustDedicated_Data\Managed\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Oxide.Core, Version=2.0.3988.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Oxide.Core.dll</HintPath>
+    <Reference Include="NewAssembly">
+      <HintPath>..\..\..\..\..\Games\Rust\Server\Oxide.Rust-linux\RustDedicated_Data\Managed\NewAssembly.dll</HintPath>
     </Reference>
-    <Reference Include="Oxide.CSharp, Version=2.0.4037.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Oxide.CSharp.dll</HintPath>
+    <Reference Include="Oxide.Core">
+      <HintPath>..\..\..\..\..\Games\Rust\Server\Oxide.Rust-linux\RustDedicated_Data\Managed\Oxide.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Oxide.CSharp">
+      <HintPath>..\..\..\..\..\Games\Rust\Server\Oxide.Rust-linux\RustDedicated_Data\Managed\Oxide.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Oxide.MySql">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Oxide.MySql.dll</HintPath>
+      <HintPath>..\..\..\..\..\Games\Rust\Server\Oxide.Rust-linux\RustDedicated_Data\Managed\Oxide.MySql.dll</HintPath>
     </Reference>
-    <Reference Include="Oxide.References, Version=2.0.3774.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Oxide.References.dll</HintPath>
+    <Reference Include="Oxide.References">
+      <HintPath>..\..\..\..\..\Games\Rust\Server\Oxide.Rust-linux\RustDedicated_Data\Managed\Oxide.References.dll</HintPath>
     </Reference>
     <Reference Include="Oxide.Rust">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Oxide.Rust.dll</HintPath>
+      <HintPath>..\..\..\..\..\Games\Rust\Server\Oxide.Rust-linux\RustDedicated_Data\Managed\Oxide.Rust.dll</HintPath>
     </Reference>
     <Reference Include="Oxide.SQLite">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Oxide.SQLite.dll</HintPath>
+      <HintPath>..\..\..\..\..\Games\Rust\Server\Oxide.Rust-linux\RustDedicated_Data\Managed\Oxide.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="Oxide.Unity">
-      <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Oxide.Unity.dll</HintPath>
+      <HintPath>..\..\..\..\..\Games\Rust\Server\Oxide.Rust-linux\RustDedicated_Data\Managed\Oxide.Unity.dll</HintPath>
     </Reference>
-    <Reference Include="Rust.Data, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Rust.Data">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Rust.Data.dll</HintPath>
     </Reference>
     <Reference Include="Rust.Demo">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Rust.Demo.dll</HintPath>
     </Reference>
-    <Reference Include="Rust.Global, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Rust.Global">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Rust.Global.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Rust.Harmony">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Rust.Harmony.dll</HintPath>
@@ -153,16 +120,13 @@
     <Reference Include="Rust.Localization">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Rust.Localization.dll</HintPath>
     </Reference>
-    <Reference Include="Rust.Platform, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Rust.Platform">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Rust.Platform.dll</HintPath>
     </Reference>
-    <Reference Include="Rust.Platform.Common, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Rust.Platform.Common">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Rust.Platform.Common.dll</HintPath>
     </Reference>
-    <Reference Include="Rust.Platform.Steam, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Rust.Platform.Steam">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Rust.Platform.Steam.dll</HintPath>
     </Reference>
     <Reference Include="Rust.UI">
@@ -177,48 +141,35 @@
     <Reference Include="System">
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Core">
-      <Private>True</Private>
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>..\..\..\..\..\Games\Rust\Server\Oxide.Rust-linux\RustDedicated_Data\Managed\System.Data.SQLite.dll</HintPath>
     </Reference>
-    <Reference Include="System.Xml.Linq">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CSharp">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Data">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Net.Http">
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Xml">
-      <Private>True</Private>
-    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Transactions" />
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\NoSteam.cs" />
-    <Compile Include="Utils\Serilization.cs" />
-    <Compile Include="Utils\SteamTicket.cs" />
-    <Compile Include="Utils\SteamSession.cs" />
-    <Compile Include="Utils\Ticket.cs" />
-    <Compile Include="Utils\SteamTokendata.cs" />
     <Compile Include="NoSteamExtension.cs" />
     <Compile Include="Patch\Core.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\Serilization.cs" />
+    <Compile Include="Utils\SteamSession.cs" />
+    <Compile Include="Utils\SteamTicket.cs" />
+    <Compile Include="Utils\SteamTokendata.cs" />
+    <Compile Include="Utils\Ticket.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>$(ILMergeConsolePath) /out:Oxide.Ext.NoSteam.dll 0Harmony.dll Oxide.Ext.NoSteam-Windows.dll</PostBuildEvent>
+    <PostBuildEvent>$(ILMergeConsolePath) /out:Oxide.Ext.NoSteam.dll 0Harmony.dll Oxide.Ext.NoSteam-Linux.dll</PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -12,7 +12,6 @@ namespace Oxide.Ext.NoSteam
     {
         private bool _loaded;
 
-
         public NoSteamExtension(ExtensionManager manager) : base(manager)
         {
             Instance = this;
@@ -21,9 +20,9 @@ namespace Oxide.Ext.NoSteam
         public override string Name => "NoSteam";
 
         public override VersionNumber Version => new VersionNumber(
-            (ushort) Assembly.GetExecutingAssembly().GetName().Version.Major,
-            (ushort) Assembly.GetExecutingAssembly().GetName().Version.Minor,
-            (ushort) Assembly.GetExecutingAssembly().GetName().Version.Build);
+            (ushort)Assembly.GetExecutingAssembly().GetName().Version.Major,
+            (ushort)Assembly.GetExecutingAssembly().GetName().Version.Minor,
+            (ushort)Assembly.GetExecutingAssembly().GetName().Version.Build);
 
         public override string Author => "Kaidoz";
 
@@ -36,7 +35,6 @@ namespace Oxide.Ext.NoSteam
 
             _loaded = true;
             Core.NoSteam.InitPlugin();
-            // base.Manager.RegisterPluginLoader(new NoSteamPluginLoader(this));
         }
 
         public override void OnModLoad()

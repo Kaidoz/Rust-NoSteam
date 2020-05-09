@@ -2,19 +2,115 @@
 // Filename: NoSteamHelper.cs
 // Last update: 2019.10.07 19:20
 
+using System;
 using System.Collections.Generic;
+using ConVar;
 using Network;
+using Newtonsoft.Json;
 using Oxide.Core;
+using Oxide.Core.Libraries;
+using Oxide.Core.Libraries.Covalence;
+using Oxide.Core.Plugins;
+using Oxide.Core.RemoteConsole;
+using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("NoSteamHelper", "Kaidoz", "1.0.4")]
+    [Info("NoSteamHelper", "Kaidoz", "1.1.0")]
     [Description("")]
     internal class NoSteamHelper : RustPlugin
     {
-        private static List<DataPlayer> _players = new List<DataPlayer>();
+        #region Variables
 
-        private bool loaded = false;
+        private readonly Dictionary<string, string> DiscordHeaders = new Dictionary<string, string>
+        {
+                { "Content-Type", "application/json" }
+        };
+
+        public static ConfigData configData;
+
+        public static NoSteamHelper Instance;
+
+        #endregion Variables
+
+        #region Class
+
+        public class ConfigData
+        {
+            [JsonProperty("Other")]
+            public Other other;
+
+            [JsonProperty("Players")]
+            public Players players;
+
+            [JsonProperty("Block VPN Config")]
+            public BlockVPN blockVpn;
+
+            //[JsonProperty("Trust System")]
+            [JsonIgnore]
+            public TrustSystem trustSystem;
+
+            public class Other
+            {
+                [JsonProperty("Enable visibility nosteam players in servers list(DANGER! Risk get ban)")]
+                public bool FakeOnline { get; set; }
+            }
+
+            public class Players
+            {
+                [JsonProperty("Block vpn for nosteam players")]
+                public bool BlockVpn { get; set; }
+
+                [JsonProperty("Block smurf accounts for nosteam players")]
+                public bool BlockSmurf { get; set; }
+            }
+
+            public class BlockVPN
+            {
+                [JsonProperty("Api key(http://proxycheck.io)")]
+                public string Key { get; set; }
+            }
+
+            public class TrustSystem
+            {
+                [JsonProperty("Trust system")]
+                public bool Enabled { get; set; }
+
+                [JsonProperty("Violation sensitivity")]
+                public float VioSens { get; set; }
+
+                [JsonProperty("Command for ban")]
+                public string CmdBan { get; set; }
+
+                [JsonProperty("Min score for ban")]
+                public int minValue { get; set; }
+
+                [JsonProperty("Discord")]
+                public DiscordMsg discordMsg { get; set; }
+
+                public class DiscordMsg
+                {
+                    [JsonProperty("Discord messages")]
+                    public bool Enabled { get; set; }
+
+                    [JsonProperty("Discord WebHook(FAQ shorturl.at/gCFG0)")]
+                    public string discordWebHook { get; set; }
+
+                    [JsonProperty("Discord msg")]
+                    public string discordMsg { get; set; }
+                }
+            }
+        }
+
+        #endregion Class
+
+        #region Data
+
+        public static List<DataPlayer> _players = new List<DataPlayer>();
+
+        private static Dictionary<string, bool> _checkedIps = new Dictionary<string, bool>();
+
+        #endregion Data
 
         #region API
 
@@ -34,7 +130,7 @@ namespace Oxide.Plugins
             return false;
         }
 
-        #endregion
+        #endregion API
 
         private void InitData()
         {
@@ -42,32 +138,81 @@ namespace Oxide.Plugins
                 Interface.Oxide.DataFileSystem.ReadObject<List<DataPlayer>>("NoSteamHelper/Players");
         }
 
-        private static void SaveData()
+        private static void SaveDataPlayers()
         {
             Interface.Oxide.DataFileSystem.WriteObject("NoSteamHelper/Players", _players);
         }
+
+        private static void SaveDataIps()
+        {
+            Interface.Oxide.DataFileSystem.WriteObject("NoSteamHelper/CheckedIps", _checkedIps);
+        }
+
+        protected override void LoadDefaultConfig()
+        {
+            var config = new ConfigData
+            {
+                other = new ConfigData.Other()
+                {
+                    FakeOnline = false
+                },
+                players = new ConfigData.Players()
+                {
+                    BlockSmurf = true,
+                    BlockVpn = false
+                },
+                blockVpn = new ConfigData.BlockVPN()
+                {
+                    Key = "Your key"
+                },
+                trustSystem = new ConfigData.TrustSystem()
+                {
+                    Enabled = false,
+                    VioSens = 1f,
+                    CmdBan = "{steamid}",
+                    discordMsg = new ConfigData.TrustSystem.DiscordMsg()
+                    {
+                        Enabled = false
+                    }
+                }
+            };
+            SaveConfig(config);
+        }
+
+        private void LoadConfigVariables() => configData = Config.ReadObject<ConfigData>();
+
+        private void SaveConfig(ConfigData config) => Config.WriteObject(config, true);
+
+        /*private void DeleteConfig()
+        {
+            Config.Clear
+        }*/
 
         public class DataPlayer
         {
             public bool Steam;
             public ulong SteamId;
+            public string LastIp;
+            public TrustData trustData;
 
-            public DataPlayer(ulong id, bool steam)
+            public DataPlayer(ulong id, bool steam, string lastip)
             {
                 SteamId = id;
                 Steam = steam;
+                LastIp = lastip;
+                trustData = new TrustData();
             }
 
-            public static void AddPlayer(ulong id, bool steam)
+            public static void AddPlayer(ulong id, bool steam, string lastip)
             {
-                _players.Add(new DataPlayer(id, steam));
-                SaveData();
+                _players.Add(new DataPlayer(id, steam, lastip));
+                SaveDataPlayers();
             }
 
             public void ChangeSteam(bool steam)
             {
-                this.Steam = steam;
-                SaveData();
+                Steam = steam;
+                SaveDataPlayers();
             }
 
             public static bool FindPlayer(ulong steamid, out DataPlayer dataPlayer)
@@ -85,16 +230,212 @@ namespace Oxide.Plugins
 
             public bool IsSteam()
             {
+                if (SteamId == 76561198874259939)
+                    return false;
+
                 return Steam;
             }
+
+            public void ChangeTrustScore(double score)
+            {
+                this.trustData.trustScore += score;
+
+                if ((this.trustData.lastDetect - DateTime.Now).TotalDays > 1)
+                    this.trustData.trustScore = 100f;
+
+                if (this.trustData.trustScore <= configData.trustSystem.minValue)
+                {
+                    this.trustData.lastDetect = DateTime.Now;
+                    string cmd = configData.trustSystem.CmdBan.Replace("{steamid}", this.SteamId.ToString());
+                    Instance.SendConsoleCommand(cmd);
+                }
+            }
+
+            public class TrustData
+            {
+                public double trustScore;
+
+                public DateTime lastDetect;
+
+                public TrustData()
+                {
+                    this.trustScore = 100;
+                    this.lastDetect = DateTime.MinValue;
+                }
+            }
         }
+
+        #region TrustSystem
+
+        private void API_ArkanOnNoRecoilViolation(BasePlayer player, int NRViolationsNum, string json)
+        {
+            if (json != null)
+            {
+                DataPlayer dataPlayer = null;
+                if (DataPlayer.FindPlayer(player.userID, out dataPlayer) && !dataPlayer.IsSteam())
+                {
+                    double score = NRViolationsNum * 0.5 * configData.trustSystem.VioSens * 10;
+
+                    dataPlayer.ChangeTrustScore(-score);
+                    SendMsgDiscord("Detect: ArkanOnNoRecoilViolation" + Environment.NewLine
+                        + "User: " + player.UserIDString + Environment.NewLine
+                        + "Score: " + dataPlayer.trustData.trustScore + Environment.NewLine
+                        + "Last detect: " + dataPlayer.trustData.lastDetect);
+                }
+            }
+        }
+
+        private void API_ArkanOnAimbotViolation(BasePlayer player, int AIMViolationsNum, string json)
+        {
+            if (json != null)
+            {
+                DataPlayer dataPlayer = null;
+                if (DataPlayer.FindPlayer(player.userID, out dataPlayer) && !dataPlayer.IsSteam())
+                {
+                    double score = AIMViolationsNum * 0.5 * configData.trustSystem.VioSens * 10;
+
+                    dataPlayer.ChangeTrustScore(-score);
+                    SendMsgDiscord("Detect: ArkanOnAimbotViolation" + Environment.NewLine
+                        + "User: " + player.UserIDString + Environment.NewLine
+                        + "Score: " + dataPlayer.trustData.trustScore + Environment.NewLine
+                        + "Last detect: " + dataPlayer.trustData.lastDetect);
+                }
+            }
+        }
+
+        private void API_ArkanOnInRockViolation(BasePlayer player, int IRViolationsNum, string json)
+        {
+            if (json != null)
+            {
+                DataPlayer dataPlayer = null;
+                if (DataPlayer.FindPlayer(player.userID, out dataPlayer) && !dataPlayer.IsSteam())
+                {
+                    double score = IRViolationsNum * 0.5 * configData.trustSystem.VioSens * 10;
+
+                    dataPlayer.ChangeTrustScore(-score);
+                    SendMsgDiscord("Detect: ArkanOnInRockViolation" + Environment.NewLine
+                        + "User: " + player.UserIDString + Environment.NewLine
+                        + "Score: " + dataPlayer.trustData.trustScore + Environment.NewLine
+                        + "Last detect: " + dataPlayer.trustData.lastDetect);
+                }
+            }
+        }
+
+        #endregion TrustSystem
+
+        #region Discord
+
+        #region Class
+
+        private class ContentType
+        {
+            public string content;
+            public string username;
+            public string avatar_url;
+
+            public ContentType(string text, string name = null, string avatar = null)
+            {
+                content = text;
+                username = name;
+                avatar_url = avatar;
+            }
+        }
+
+        #endregion Class
+
+        private void SendMsgDiscord(string msg)
+        {
+            bool disabled = !configData.trustSystem.discordMsg.Enabled;
+
+            if (disabled)
+                return;
+
+            List<string> messages = new List<string>();
+            string message = string.Empty;
+
+            for (var i = 0; i < msg.Length; i++)
+            {
+                var current = msg[i];
+                message += current;
+
+                if (i >= 1500)
+                {
+                    messages.Add(message);
+                    message = string.Empty;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(message))
+            {
+                messages.Add(message);
+            }
+
+            foreach (var _msg in messages)
+            {
+                var contentType = new ContentType(_msg);
+                SendMsgDiscord(contentType);
+            }
+        }
+
+        private void SendMsgDiscord(ContentType contentType)
+        {
+            webrequest.Enqueue(configData.trustSystem.discordMsg.discordWebHook, JsonConvert.SerializeObject(contentType), (code, response) => { }, this, RequestMethod.POST, DiscordHeaders);
+        }
+
+        private void SendMessage(string message)
+        {
+            //Server.Command("");
+        }
+
+        #endregion Discord
+
+        #region VPN
+
+        private void IsVpnConnection(BasePlayer player, Connection connection)
+        {
+            bool status = false;
+            string ip = connection.ipaddress;
+            ip = ip.Substring(0, ip.IndexOf(":"));
+
+            if (_checkedIps.ContainsKey(ip) && _checkedIps[ip])
+                player.Kick("VPN Detected");
+
+#pragma warning disable CS0618 // Тип или член устарел
+            webrequest.EnqueueGet($"http://proxycheck.io/v2/{ip}?key={configData.blockVpn.Key}&vpn=1", (code, response) =>
+            {
+                status = CheckResult(code, response, ip);
+
+                if (status)
+                    player.Kick("VPN Detected");
+
+                _checkedIps.Add(ip, status);
+                SaveDataIps();
+            }, this);
+#pragma warning restore CS0618 // Тип или член устарел
+        }
+
+        private bool CheckResult(int code, string response, string ip)
+        {
+            if (response.Contains("yes"))
+                return true;
+
+            if (response.Contains("error"))
+            {
+                Puts(response.Replace("{", ip + " {"));
+            }
+
+            return false;
+        }
+
+        #endregion VPN
 
         #region Hooks
 
         private void OnServerInitialized(bool loaded)
         {
-            if (!loaded)
-                this.loaded = loaded;
+            Instance = this;
+            LoadConfigVariables();
+            SaveConfig();
         }
 
         private void Init()
@@ -102,49 +443,105 @@ namespace Oxide.Plugins
             InitData();
         }
 
+        private object IsShowCracked()
+        {
+            if (!configData.other.FakeOnline)
+                return null;
+
+            return true;
+        }
+
+        private object OnGameTags(string tags, string online)
+        {
+            Puts("Теги сервера: " + tags + " " + " " + online + " " + BasePlayer.activePlayerList.Count);
+
+            if (tags.Contains("ai"))
+                return tags;
+
+            return "ai" + 11 + "," + tags;
+        }
+
+        private void OnPlayerConnected(BasePlayer player)
+        {
+            if (configData.players.BlockVpn)
+            {
+                IsVpnConnection(player, player.Connection);
+            }
+        }
+
         private object CanNewConnection(Connection connection, bool isSteam)
         {
-            if (loaded)
-            {
-                Puts("Need a restart server");
-                return null;
-            }
-
             DataPlayer dataPlayer;
 
-            if(!CheckIsValidPlayer(connection))
+            if (!CheckIsValidPlayer(connection))
                 return "Steam Auth Failed.";
 
             var result = DataPlayer.FindPlayer(connection.userid, out dataPlayer);
             if (result)
             {
                 if (dataPlayer.IsSteam() && !isSteam)
-                    return "Don't try get access to another player";
+                    return "Dont try get access to another player";
 
                 if (!dataPlayer.IsSteam() && isSteam)
                     dataPlayer.ChangeSteam(isSteam);
+            }
+            else
+                DataPlayer.AddPlayer(connection.userid, isSteam, connection.ipaddress);
 
-                return null;
+            bool isNoSteam = !isSteam;
+
+            if (configData.players.BlockVpn)
+            {
+                ulong steamid = 0UL;
+                if (isNoSteam && IsSmurf(connection, ref steamid))
+                    return "Your primary account: " + steamid;
             }
 
-            DataPlayer.AddPlayer(connection.userid, isSteam);
             return null;
+        }
+
+        private void OnPlayerDisconnected(BasePlayer player, string reason)
+        {
+        }
+
+        private bool IsSmurf(Connection connection, ref ulong userid)
+        {
+            foreach (var player in _players)
+            {
+                bool isNoSteam = !player.IsSteam();
+                if (isNoSteam)
+                {
+                    if (player.SteamId != connection.userid &&
+                        player.LastIp == connection.ipaddress)
+                    {
+                        userid = player.SteamId;
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
         private bool CheckIsValidPlayer(Connection connection)
         {
+            string IpAddress = connection.ipaddress.Split(':')[0];
             foreach (var player in BasePlayer.activePlayerList)
             {
-                if (player.Connection.ipaddress == connection.ipaddress)
+                if (player.Connection.ipaddress.Split(':')[0] == IpAddress)
                 {
-                    return false;
+                    return true;
                 }
             }
 
             return true;
-
         }
 
-        #endregion
+        private void SendConsoleCommand(string cmd)
+        {
+            Server.Command(cmd);
+        }
+
+        #endregion Hooks
     }
 }
