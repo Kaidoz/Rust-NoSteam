@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CS0618: Тип или член устарел
+dotnet_diagnostic.CS0618.severity = none
