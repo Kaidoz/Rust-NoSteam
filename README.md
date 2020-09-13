@@ -1,4 +1,5 @@
 # Rust-NoSteam
+Discord: https://discord.gg/Tn3kzbE
 ### Info
 - Protected steam players against hack(fake steamid)
 - Nosteam players are not displayed in server list to avoid ban([API-FacePunch](https://api.facepunch.com/api/public/manifest/?public_key=j0VF6sNnzn9rwt9qTZtI02zTYK8PRdN1))
