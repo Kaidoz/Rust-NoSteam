@@ -382,7 +382,7 @@ namespace Oxide.Ext.NoSteam.Patch
             [HarmonyPostfix]
             private static void Postfix(BasePlayer __instance)
             {
-                __instance.ChatMessage("asd");
+                __instance.ChatMessage("asdr");
             }
         }
 
