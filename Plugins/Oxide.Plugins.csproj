@@ -34,9 +34,7 @@
   <ItemGroup>
     <Compile Include="AuthMe.cs" />
     <Compile Include="NoSteamHelper.cs" />
-    <None Include="PluginsTIme.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="UpdateChecker.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

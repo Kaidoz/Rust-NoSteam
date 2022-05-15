@@ -1,8 +1,0 @@
-D:\Sources\C#\Oxide.NoSteam\Source\ConsoleApp1\bin\Release\ConsoleApp1.exe.config
-D:\Sources\C#\Oxide.NoSteam\Source\ConsoleApp1\bin\Release\ConsoleApp1.exe
-D:\Sources\C#\Oxide.NoSteam\Source\ConsoleApp1\bin\Release\ConsoleApp1.pdb
-D:\Sources\C#\Oxide.NoSteam\Source\ConsoleApp1\obj\Release\ConsoleApp1.csproj.CoreCompileInputs.cache
-D:\Sources\C#\Oxide.NoSteam\Source\ConsoleApp1\obj\Release\ConsoleApp1.exe
-D:\Sources\C#\Oxide.NoSteam\Source\ConsoleApp1\obj\Release\ConsoleApp1.pdb
-D:\Sources\C#\Oxide.NoSteam\Source\ConsoleApp1\obj\Release\ConsoleApp1.csprojAssemblyReference.cache
-D:\Sources\C#\Oxide.NoSteam\Source\ConsoleApp1\obj\Release\ConsoleApp1.csproj.AssemblyReference.cache
