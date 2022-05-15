@@ -193,14 +193,12 @@ namespace Oxide.Plugins
             public bool Steam;
             public ulong SteamId;
             public string LastIp;
-            public TrustData trustData;
 
             public DataPlayer(ulong id, bool steam, string lastip)
             {
                 SteamId = id;
                 Steam = steam;
                 LastIp = lastip;
-                trustData = new TrustData();
             }
 
             public static void AddPlayer(ulong id, bool steam, string lastip)
@@ -235,93 +233,7 @@ namespace Oxide.Plugins
 
                 return Steam;
             }
-
-            public void ChangeTrustScore(double score)
-            {
-                this.trustData.trustScore += score;
-
-                if ((this.trustData.lastDetect - DateTime.Now).TotalDays > 1)
-                    this.trustData.trustScore = 100f;
-
-                if (this.trustData.trustScore <= configData.trustSystem.minValue)
-                {
-                    this.trustData.lastDetect = DateTime.Now;
-                    string cmd = configData.trustSystem.CmdBan.Replace("{steamid}", this.SteamId.ToString());
-                    Instance.SendConsoleCommand(cmd);
-                }
-            }
-
-            public class TrustData
-            {
-                public double trustScore;
-
-                public DateTime lastDetect;
-
-                public TrustData()
-                {
-                    this.trustScore = 100;
-                    this.lastDetect = DateTime.MinValue;
-                }
-            }
         }
-
-        #region TrustSystem
-
-        private void API_ArkanOnNoRecoilViolation(BasePlayer player, int NRViolationsNum, string json)
-        {
-            if (json != null)
-            {
-                DataPlayer dataPlayer = null;
-                if (DataPlayer.FindPlayer(player.userID, out dataPlayer) && !dataPlayer.IsSteam())
-                {
-                    double score = NRViolationsNum * 0.5 * configData.trustSystem.VioSens * 10;
-
-                    dataPlayer.ChangeTrustScore(-score);
-                    SendMsgDiscord("Detect: ArkanOnNoRecoilViolation" + Environment.NewLine
-                        + "User: " + player.UserIDString + Environment.NewLine
-                        + "Score: " + dataPlayer.trustData.trustScore + Environment.NewLine
-                        + "Last detect: " + dataPlayer.trustData.lastDetect);
-                }
-            }
-        }
-
-        private void API_ArkanOnAimbotViolation(BasePlayer player, int AIMViolationsNum, string json)
-        {
-            if (json != null)
-            {
-                DataPlayer dataPlayer = null;
-                if (DataPlayer.FindPlayer(player.userID, out dataPlayer) && !dataPlayer.IsSteam())
-                {
-                    double score = AIMViolationsNum * 0.5 * configData.trustSystem.VioSens * 10;
-
-                    dataPlayer.ChangeTrustScore(-score);
-                    SendMsgDiscord("Detect: ArkanOnAimbotViolation" + Environment.NewLine
-                        + "User: " + player.UserIDString + Environment.NewLine
-                        + "Score: " + dataPlayer.trustData.trustScore + Environment.NewLine
-                        + "Last detect: " + dataPlayer.trustData.lastDetect);
-                }
-            }
-        }
-
-        private void API_ArkanOnInRockViolation(BasePlayer player, int IRViolationsNum, string json)
-        {
-            if (json != null)
-            {
-                DataPlayer dataPlayer = null;
-                if (DataPlayer.FindPlayer(player.userID, out dataPlayer) && !dataPlayer.IsSteam())
-                {
-                    double score = IRViolationsNum * 0.5 * configData.trustSystem.VioSens * 10;
-
-                    dataPlayer.ChangeTrustScore(-score);
-                    SendMsgDiscord("Detect: ArkanOnInRockViolation" + Environment.NewLine
-                        + "User: " + player.UserIDString + Environment.NewLine
-                        + "Score: " + dataPlayer.trustData.trustScore + Environment.NewLine
-                        + "Last detect: " + dataPlayer.trustData.lastDetect);
-                }
-            }
-        }
-
-        #endregion TrustSystem
 
         #region Discord
 
