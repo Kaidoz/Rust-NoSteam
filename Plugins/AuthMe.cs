@@ -21,10 +21,10 @@ namespace Oxide.Plugins
     {
         private static readonly ObservableCollection<ulong> ListSteamPlayers = new ObservableCollection<ulong>();
 
-        [JsonProperty("Информация об игроках")]
+        [JsonProperty("Information of players")]
         private static Dictionary<ulong, DataAuthorize> _dataAuthorizes = new Dictionary<ulong, DataAuthorize>();
 
-        [JsonProperty("Слой с интерфейсом")] private static readonly string Layer = "UI.Login";
+        [JsonProperty("Layer UI")] private static readonly string Layer = "UI.Login";
 
         private readonly Dictionary<string, string> _cacheHexColors = new Dictionary<string, string>();
 

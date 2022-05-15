@@ -46,10 +46,6 @@ namespace Oxide.Plugins
             [JsonProperty("Block VPN Config")]
             public BlockVPN blockVpn;
 
-            //[JsonProperty("Trust System")]
-            [JsonIgnore]
-            public TrustSystem trustSystem;
-
             public class Other
             {
                 [JsonProperty("Enable visibility nosteam players in servers list(DANGER! Risk get ban)")]
@@ -69,36 +65,6 @@ namespace Oxide.Plugins
             {
                 [JsonProperty("Api key(http://proxycheck.io)")]
                 public string Key { get; set; }
-            }
-
-            public class TrustSystem
-            {
-                [JsonProperty("Trust system")]
-                public bool Enabled { get; set; }
-
-                [JsonProperty("Violation sensitivity")]
-                public float VioSens { get; set; }
-
-                [JsonProperty("Command for ban")]
-                public string CmdBan { get; set; }
-
-                [JsonProperty("Min score for ban")]
-                public int minValue { get; set; }
-
-                [JsonProperty("Discord")]
-                public DiscordMsg discordMsg { get; set; }
-
-                public class DiscordMsg
-                {
-                    [JsonProperty("Discord messages")]
-                    public bool Enabled { get; set; }
-
-                    [JsonProperty("Discord WebHook(FAQ shorturl.at/gCFG0)")]
-                    public string discordWebHook { get; set; }
-
-                    [JsonProperty("Discord msg")]
-                    public string discordMsg { get; set; }
-                }
             }
         }
 
@@ -164,16 +130,6 @@ namespace Oxide.Plugins
                 blockVpn = new ConfigData.BlockVPN()
                 {
                     Key = "Your key"
-                },
-                trustSystem = new ConfigData.TrustSystem()
-                {
-                    Enabled = false,
-                    VioSens = 1f,
-                    CmdBan = "{steamid}",
-                    discordMsg = new ConfigData.TrustSystem.DiscordMsg()
-                    {
-                        Enabled = false
-                    }
                 }
             };
             SaveConfig(config);
@@ -255,43 +211,10 @@ namespace Oxide.Plugins
 
         #endregion Class
 
-        private void SendMsgDiscord(string msg)
-        {
-            bool disabled = !configData.trustSystem.discordMsg.Enabled;
-
-            if (disabled)
-                return;
-
-            List<string> messages = new List<string>();
-            string message = string.Empty;
-
-            for (var i = 0; i < msg.Length; i++)
-            {
-                var current = msg[i];
-                message += current;
-
-                if (i >= 1500)
-                {
-                    messages.Add(message);
-                    message = string.Empty;
-                }
-            }
-
-            if (!string.IsNullOrEmpty(message))
-            {
-                messages.Add(message);
-            }
-
-            foreach (var _msg in messages)
-            {
-                var contentType = new ContentType(_msg);
-                SendMsgDiscord(contentType);
-            }
-        }
 
         private void SendMsgDiscord(ContentType contentType)
         {
-            webrequest.Enqueue(configData.trustSystem.discordMsg.discordWebHook, JsonConvert.SerializeObject(contentType), (code, response) => { }, this, RequestMethod.POST, DiscordHeaders);
+            webrequest.Enqueue("discord web hook", JsonConvert.SerializeObject(contentType), (code, response) => { }, this, RequestMethod.POST, DiscordHeaders);
         }
 
         private void SendMessage(string message)
@@ -312,7 +235,6 @@ namespace Oxide.Plugins
             if (_checkedIps.ContainsKey(ip) && _checkedIps[ip])
                 player.Kick("VPN Detected");
 
-#pragma warning disable CS0618 // Тип или член устарел
             webrequest.EnqueueGet($"http://proxycheck.io/v2/{ip}?key={configData.blockVpn.Key}&vpn=1", (code, response) =>
             {
                 status = CheckResult(code, response, ip);
@@ -323,7 +245,6 @@ namespace Oxide.Plugins
                 _checkedIps.Add(ip, status);
                 SaveDataIps();
             }, this);
-#pragma warning restore CS0618 // Тип или член устарел
         }
 
         private bool CheckResult(int code, string response, string ip)
@@ -365,12 +286,7 @@ namespace Oxide.Plugins
 
         private object OnGameTags(string tags, string online)
         {
-            Puts("Теги сервера: " + tags + " " + " " + online + " " + BasePlayer.activePlayerList.Count);
-
-            if (tags.Contains("ai"))
-                return tags;
-
-            return "ai" + 11 + "," + tags;
+            return null;
         }
 
         private void OnPlayerConnected(BasePlayer player)
