@@ -29,6 +29,8 @@ bld/
 NoSteam/
 Oxide.Ext.NoSteam-Linux
 Oxide.Ext.NoSteam-WIndows
+Oxide.Ext.NoSteam-Linux/
+Oxide.Ext.NoSteam-WIndows/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
