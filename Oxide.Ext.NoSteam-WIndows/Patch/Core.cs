@@ -340,25 +340,18 @@ namespace Oxide.Ext.NoSteam.Patch
         [HarmonyPatch("BeginPlayerSession")]
         private static class SteamPlatformBeginPlayer
         {
-            [HarmonyPrefix]
-            private static bool Prefix(ulong userId, byte[] authToken, ref bool __result)
+            [HarmonyPostfix]
+            private static bool Postfix(ulong userId, byte[] authToken, ref bool __result)
             {
-                SteamServer.BeginAuthSession(authToken, userId);
-
                 var ticket = new SteamTicket(authToken);
 
                 ticket.GetClientVersion();
 
                 if (Players.ContainsKey(userId))
-                    Players[userId] = ticket.clientVersion == SteamTicket.ClientVersion.Steam;
+                    Players[userId] = __result;
                 else
                 {
-                    Players.Add(userId, ticket.clientVersion == SteamTicket.ClientVersion.Steam);
-                }
-
-                if (ticket.clientVersion == SteamTicket.ClientVersion.Steam)
-                {
-                    //return true;
+                    Players.Add(userId, __result);
                 }
 
                 __result = true;
@@ -379,6 +372,17 @@ namespace Oxide.Ext.NoSteam.Patch
                 __result = ConVar.Server.maxplayers - CountSteamPlayer();
 
                 return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(BasePlayer))]
+        [HarmonyPatch("PlayerInit")]
+        private static class PlayerInitBasePlayerPatch
+        {
+            [HarmonyPostfix]
+            private static void Postfix(BasePlayer __instance)
+            {
+                __instance.ChatMessage();
             }
         }
 
