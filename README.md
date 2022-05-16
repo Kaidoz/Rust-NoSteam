@@ -2,12 +2,11 @@
 Discord: https://discord.gg/Tn3kzbE
 
 ### Donations
-
-https://www.buymeacoffee.com/kaidoz
-https://boosty.to/kaidoz/single-payment/donation/29238
-https://qiwi.com/n/KAIDOZ
-VISA: 4279380632007755
-BTC: 1DNEbR5Yk6a6NXDuQHB2XGAAjaqL8NXvUc
+- https://www.buymeacoffee.com/kaidoz
+- https://boosty.to/kaidoz/single-payment/donation/29238
+- https://qiwi.com/n/KAIDOZ
+- VISA: 4279380632007755
+- BTC: 1DNEbR5Yk6a6NXDuQHB2XGAAjaqL8NXvUc
 
 ### Info
 - Protected steam players against hack(fake steamid)
