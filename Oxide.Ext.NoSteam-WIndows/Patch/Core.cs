@@ -12,7 +12,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using Facepunch.Math;
 using Facepunch.Extend;
 using System.Collections;
 using System.Diagnostics;
@@ -56,125 +55,34 @@ namespace Oxide.Ext.NoSteam.Patch
             OnAuthenticatedRemote = typeof(EACServer).GetMethod("OnAuthenticatedRemote", BindingFlags.Static | BindingFlags.NonPublic);
         }
 
-        /*
-
-                [HarmonyPatch(typeof(ConnectionAuth))]
-                [HarmonyPatch("OnNewConnection")]
-                private static class ConnectionAuthPatch
+        [HarmonyPatch(typeof(SteamPlatform), nameof(SteamPlatform.LoadPlayerStats))]
+        private static class SteamPlatformLoadPlayerStats
+        {
+            [HarmonyPrefix]
+            private static bool Prefix(ulong userId, ref Task<bool> __result)
+            {
+                if (CheckIsNoSteamConnection(userId))
                 {
-                    [HarmonyPrefix]
-                    private static bool Prefix(ConnectionAuth __instance, Connection connection)
-                    {
-                        OnNewConnection(__instance, connection);
-
-                        return false;
-                    }
-
-                    private static void OnNewConnection(ConnectionAuth __instance, Connection connection)
-                    {
-                        connection.connected = false;
-                        if (connection.token == null || connection.token.Length < 32)
-                        {
-                            ConnectionAuth.Reject(connection, "Invalid Token", null);
-                            return;
-                        }
-                        if (connection.userid == 0UL)
-                        {
-                            ConnectionAuth.Reject(connection, "Invalid SteamID", null);
-                            return;
-                        }
-        #if !DEBUG
-                        if (connection.protocol != Rust.Protocol.network)
-                        {
-                            if (!DeveloperList.Contains(connection.userid))
-                            {
-                                ConnectionAuth.Reject(connection, "Incompatible Version", null);
-                                return;
-                            }
-                            DebugEx.Log("Not kicking " + connection.userid + " for incompatible protocol (is a developer)", StackTraceLogType.None);
-                        }
-        #endif
-                        if (ServerUsers.Is(connection.userid, ServerUsers.UserGroup.Banned))
-                        {
-                            ServerUsers.User user = ServerUsers.Get(connection.userid);
-                            string text = ((user != null) ? user.notes : null) ?? "no reason given";
-                            string text2 = (user != null && user.expiry > 0L) ? (" for " + (user.expiry - (long)Epoch.Current).FormatSecondsLong()) : "";
-                            ConnectionAuth.Reject(connection, string.Concat(new string[]
-                            {
-                        "You are banned from this server",
-                        text2,
-                        " (",
-                        text,
-                        ")"
-                            }), null);
-                            return;
-                        }
-                        if (ServerUsers.Is(connection.userid, ServerUsers.UserGroup.Moderator))
-                        {
-                            DebugEx.Log(connection.ToString() + " has auth level 1", StackTraceLogType.None);
-                            connection.authLevel = 1u;
-                        }
-                        if (ServerUsers.Is(connection.userid, ServerUsers.UserGroup.Owner))
-                        {
-                            DebugEx.Log(connection.ToString() + " has auth level 2", StackTraceLogType.None);
-                            connection.authLevel = 2u;
-                        }
-                        if (DeveloperList.Contains(connection.userid))
-                        {
-                            connection.authLevel = 0u;
-                        }
-                        if (Interface.CallHook("IOnUserApprove", connection) != null)
-                        {
-                            return;
-                        }
-                        ConnectionAuth.m_AuthConnection.Add(connection);
-                        __instance.StartCoroutine(AuthorisationRoutine(__instance, connection));
-                    }
-
-                    private static IEnumerator AuthorisationRoutine(ConnectionAuth __instance, Connection connection)
-                    {
-                        yield return __instance.StartCoroutine(AuthSteam(connection));
-                        yield return __instance.StartCoroutine(Auth_EAC.Run(connection));
-
-                        if (connection.rejected || !connection.active)
-                        {
-                            yield break;
-                        }
-
-                        if (__instance.IsAuthed(connection.userid))
-                        {
-                            ConnectionAuth.Reject(connection, "You are already connected as a player!", null);
-                            yield break;
-                        }
-
-                        __instance.Approve(connection);
-                        yield break;
-                    }
-
-                    private static IEnumerator AuthSteam(Connection connection)
-                    {
-                        connection.authStatus = "";
-                        if (!PlatformService.Instance.BeginPlayerSession(connection.userid, connection.token))
-                        {
-                            DebugEx.Log("Steam Auth Failed - AuthSteam", StackTraceLogType.None);
-                            ConnectionAuth.Reject(connection, "Steam Auth Failed", null);
-                            yield break;
-                        }
-                        var waitingList = (List<Connection>)field_waitingList.GetValue(null);
-                        waitingList.Add(connection);
-                        Stopwatch timeout = Stopwatch.StartNew();
-                        while (timeout.Elapsed.TotalSeconds < 30.0 && connection.active && !(connection.authStatus != ""))
-                        {
-                            yield return null;
-                        }
-                        waitingList.Remove(connection);
-
-                        yield break;
-                    }
+                    __result = Task.FromResult(true);
+                    return false;
                 }
 
-                */
+                return true;
+            }
+        }
 
+        [HarmonyPatch(typeof(EACServer), nameof(EACServer.OnJoinGame))]
+        private static class Patch01
+        {
+            [HarmonyPrefix]
+            private static bool Prefix(Connection connection)
+            {
+
+                OnAuthenticatedLocal.Invoke(null, new object[] { connection });
+                OnAuthenticatedRemote.Invoke(null, new object[] { connection });
+                return false;
+            }
+        }
 
         [HarmonyPatch(typeof(ConnectionAuth), nameof(ConnectionAuth.OnNewConnection))]
         private class ConnectionAuthPatch
@@ -188,15 +96,6 @@ namespace Oxide.Ext.NoSteam.Patch
                 if (DeveloperList.Contains(connection.userid))
                 {
                     ConnectionAuth.Reject(connection, "Developer SteamId");
-                    return false;
-                }
-
-                bool IsNosteam = !CheckIsNoSteamConnection(connection);
-                var message = Interface.CallHook("CanNewConnection", connection, IsNosteam);
-
-                if (message != null)
-                {
-                    ConnectionAuth.Reject(connection, message.ToString());
                     return false;
                 }
 
@@ -217,42 +116,6 @@ namespace Oxide.Ext.NoSteam.Patch
             }
         }
 
-        [HarmonyPatch(typeof(EACServer), nameof(EACServer.OnJoinGame))]
-        private static class Patch01
-        {
-            [HarmonyPrefix]
-            private static bool Prefix(Connection connection)
-            {
-                if (CheckIsNoSteamConnection(connection))
-                {
-                    OnAuthenticatedLocal.Invoke(null, new object[] { connection });
-                    OnAuthenticatedRemote.Invoke(null, new object[] { connection });
-                    return false;
-                }
-
-                return true;
-            }
-        }
-
-        /*
-        [HarmonyPatch(typeof(ServerMgr))]
-        [HarmonyPatch("OnNetworkMessage")]
-        private static class ServerMgrPatch
-        {
-            [HarmonyPrefix]
-            private static bool Prefix(Message packet)
-            {
-                if (packet.type == Message.Type.DisconnectReason)
-                {
-                    Interface.CallHook("OnClientDisconnect", packet.connection, "Disconnected");
-                    Network.Net.sv.Kick(packet.connection, "Disconnected", false);
-                    return false;
-                }
-
-                return true;
-            }
-        }*/
-
         [HarmonyPatch(typeof(Auth_Steam), nameof(Auth_Steam.ValidateConnecting))]
         private static class Auth_SteamPatch
         {
@@ -261,42 +124,9 @@ namespace Oxide.Ext.NoSteam.Patch
             {
                 __result = true;
 
-                return false;
-            }
-        }
-
-        [HarmonyPatch(typeof(ConnectionAuth), nameof(ConnectionAuth.Reject))]
-        class ConnectionAuthPatch2
-        {
-            [HarmonyPrefix]
-            static bool Prefix(Connection connection, string strReason)
-            {
-                if (strReason.Contains("Steam Auth Timeout"))
-                {
-                    if (Interface.CallHook("OnSteamAuthFailed", connection) == null)
-                    {
-                        string userName = ConVar.Server.censorplayerlist ? RandomUsernames.Get(connection.userid + (ulong)((long)UnityEngine.Random.Range(0, 100000))) : connection.username;
-                        PlatformService.Instance.UpdatePlayerSession(connection.userid, userName);
-                        if (connection.rejected || !connection.active)
-                        {
-                            return false;
-                        }
-                        if (connectionAuth.IsAuthed(connection.userid))
-                        {
-                            ConnectionAuth.Reject(connection, "You are already connected as a player!", null);
-                            return false;
-                        }
-                        connectionAuth.Approve(connection);
-                        return false;
-                    }
-                }
-
-
                 return true;
             }
         }
-
-        #region STEAM
 
         [HarmonyPatch(typeof(SteamPlatform), nameof(SteamPlatform.UpdatePlayerSession))]
         private static class SteamPlatformUpdatePlayer
@@ -311,29 +141,13 @@ namespace Oxide.Ext.NoSteam.Patch
             }
         }
 
-        [HarmonyPatch(typeof(SteamPlatform), nameof(SteamPlatform.LoadPlayerStats))]
-        private static class SteamPlatformLoadPlayerStats
-        {
-            [HarmonyPrefix]
-            private static bool Prefix(ulong userId, ref Task<bool> __result)
-            {
-                if (CheckIsNoSteamConnection(userId))
-                {
-                    __result = Task.FromResult(true);
-                    return false;
-                }
-
-                return true;
-            }
-        }
-
         [HarmonyPatch(typeof(SteamPlatform), nameof(SteamPlatform.EndPlayerSession))]
         private static class SteamPlatformEndPlayer
         {
             [HarmonyPrefix]
             private static bool Prefix(ulong userId)
             {
-                if (CheckIsNoSteamConnection(userId) == false)
+                if (CheckIsNoSteamConnection(userId))
                     return false;
 
                 return true;
@@ -343,25 +157,48 @@ namespace Oxide.Ext.NoSteam.Patch
         [HarmonyPatch(typeof(SteamPlatform), nameof(SteamPlatform.BeginPlayerSession))]
         private static class SteamPlatformBeginPlayer
         {
-            [HarmonyPostfix]
-            private static void Postfix(ulong userId, byte[] authToken, ref bool __result)
+            [HarmonyPrefix]
+            private static bool HarmonyPrefix(ulong userId, byte[] authToken, ref bool __result)
             {
+                bool IsLicense = Steamworks.SteamServer.BeginAuthSession(authToken, userId);
+
                 var ticket = new SteamTicket(authToken);
 
                 ticket.GetClientVersion();
 
                 if (Players.ContainsKey(userId))
-                    Players[userId] = __result;
+                    Players[userId] = IsLicense;
                 else
                 {
-                    Players.Add(userId, __result);
+                    Players.Add(userId, IsLicense);
                 }
 
-                __result = true;
+                var connections = ConnectionAuth.m_AuthConnection;
+                var connection = connections.First(x => x.userid == userId);
+
+                if (IsLicense == false)
+                {
+
+                    connection.authStatus = "ok";
+
+                    OnAuthenticatedLocal.Invoke(null, new object[] { connection });
+                    OnAuthenticatedRemote.Invoke(null, new object[] { connection });
+                }
+
+                object reason = Interface.CallHook("OnBeginPlayerSession", userId, IsLicense);
+                if (reason == null)
+                {
+                    __result = true;
+                    return false;
+
+                }
+
+                ConnectionAuth.Reject(connection, reason.ToString(), null);
+
+                return true;
             }
         }
 
-        #endregion
 
         [HarmonyPatch(typeof(ServerMgr))]
         [HarmonyPatch("get_AvailableSlots")]
@@ -451,12 +288,7 @@ namespace Oxide.Ext.NoSteam.Patch
 
             foreach (var player in BasePlayer.activePlayerList)
             {
-                //SteamTicket steamTicket = new SteamTicket(player.Connection);
-
-                //steamTicket.GetClientVersion();
-
-                //if (steamTicket.clientVersion == SteamTicket.ClientVersion.Steam)
-                if (Players[player.userID] == true)
+                if (Players.ContainsKey(player.userID) && Players[player.userID] == true)
                 {
                     count++;
                 }

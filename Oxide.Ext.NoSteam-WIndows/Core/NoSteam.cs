@@ -39,7 +39,7 @@ namespace Oxide.Ext.NoSteam.Core
 
         private static void Init()
         {
-            Server.encryption = 1;
+            Server.encryption = 0;
         }
 
         public static void Output(string text)

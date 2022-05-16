@@ -16,8 +16,8 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("NoSteamHelper", "Kaidoz", "1.1.0")]
-    [Description("")]
+    [Info("NoSteamHelper", "Kaidoz", "1.1.2")]
+    [Description("A plugin that extends nosteam features")]
     internal class NoSteamHelper : RustPlugin
     {
         #region Variables
@@ -28,8 +28,6 @@ namespace Oxide.Plugins
         };
 
         public static ConfigData configData;
-
-        public static NoSteamHelper Instance;
 
         #endregion Variables
 
@@ -50,15 +48,21 @@ namespace Oxide.Plugins
             {
                 [JsonProperty("Enable visibility nosteam players in servers list(DANGER! Risk get ban)")]
                 public bool FakeOnline { get; set; }
+
+                [JsonProperty("AntiBot protector(blocks more than one connection from 1 ip from connect to the server)")]
+                public bool AntiBot { get; set; }
             }
 
             public class Players
             {
-                [JsonProperty("Block vpn for nosteam players")]
+                [JsonProperty("Block vpn for nosteam players(Need api key)")]
                 public bool BlockVpn { get; set; }
 
-                [JsonProperty("Block smurf accounts for nosteam players")]
+                [JsonProperty("Block smurf accounts for nosteam players(recommended TRUE)")]
                 public bool BlockSmurf { get; set; }
+
+                [JsonProperty("Block access to license accounts from nosteam(recommended TRUE)")]
+                public bool BlockChangerSteamID { get; set; }
             }
 
             public class BlockVPN
@@ -120,12 +124,14 @@ namespace Oxide.Plugins
             {
                 other = new ConfigData.Other()
                 {
-                    FakeOnline = false
+                    FakeOnline = false,
+                    AntiBot = true
                 },
                 players = new ConfigData.Players()
                 {
                     BlockSmurf = true,
-                    BlockVpn = false
+                    BlockVpn = false,
+                    BlockChangerSteamID = true
                 },
                 blockVpn = new ConfigData.BlockVPN()
                 {
@@ -138,11 +144,6 @@ namespace Oxide.Plugins
         private void LoadConfigVariables() => configData = Config.ReadObject<ConfigData>();
 
         private void SaveConfig(ConfigData config) => Config.WriteObject(config, true);
-
-        /*private void DeleteConfig()
-        {
-            Config.Clear
-        }*/
 
         public class DataPlayer
         {
@@ -184,9 +185,6 @@ namespace Oxide.Plugins
 
             public bool IsSteam()
             {
-                if (SteamId == 76561198874259939)
-                    return false;
-
                 return Steam;
             }
         }
@@ -217,10 +215,6 @@ namespace Oxide.Plugins
             webrequest.Enqueue("discord web hook", JsonConvert.SerializeObject(contentType), (code, response) => { }, this, RequestMethod.POST, DiscordHeaders);
         }
 
-        private void SendMessage(string message)
-        {
-            //Server.Command("");
-        }
 
         #endregion Discord
 
@@ -228,6 +222,9 @@ namespace Oxide.Plugins
 
         private void IsVpnConnection(BasePlayer player, Connection connection)
         {
+            if (configData.blockVpn.Key == "Your key" || string.IsNullOrEmpty(configData.blockVpn.Key))
+                return;
+
             bool status = false;
             string ip = connection.ipaddress;
             ip = ip.Substring(0, ip.IndexOf(":"));
@@ -266,7 +263,6 @@ namespace Oxide.Plugins
 
         private void OnServerInitialized(bool loaded)
         {
-            Instance = this;
             LoadConfigVariables();
             SaveConfig();
         }
@@ -278,7 +274,7 @@ namespace Oxide.Plugins
 
         private object IsShowCracked()
         {
-            if (!configData.other.FakeOnline)
+            if (configData.other.FakeOnline == false)
                 return null;
 
             return true;
@@ -293,43 +289,61 @@ namespace Oxide.Plugins
         {
             if (configData.players.BlockVpn)
             {
-                IsVpnConnection(player, player.Connection);
+                DataPlayer dataPlayer;
+                var isExists = DataPlayer.FindPlayer(player.userID, out dataPlayer);
+
+                if (isExists)
+                {
+                    if (dataPlayer.IsSteam() == false)
+                        IsVpnConnection(player, player.Connection);
+                }
+
             }
         }
 
-        private object CanNewConnection(Connection connection, bool isSteam)
+        private object OnBeginPlayerSession(Connection connection, bool playerIsLicense)
         {
+            if(configData.other.AntiBot)
+            {
+                if (playerIsLicense == true)
+                {
+                    if (CheckIsValidPlayer(connection) == false)
+                        return "Steam Auth Failed.";
+                }
+            }
+
             DataPlayer dataPlayer;
 
-            if (!CheckIsValidPlayer(connection))
-                return "Steam Auth Failed.";
+            bool isExists = DataPlayer.FindPlayer(connection.userid, out dataPlayer);
 
-            var result = DataPlayer.FindPlayer(connection.userid, out dataPlayer);
-            if (result)
+            if (isExists)
             {
-                if (dataPlayer.IsSteam() && !isSteam)
-                    return "Dont try get access to another player";
+                if (configData.players.BlockChangerSteamID)
+                {
 
-                if (!dataPlayer.IsSteam() && isSteam)
-                    dataPlayer.ChangeSteam(isSteam);
+                    if (dataPlayer.IsSteam() && playerIsLicense == false)
+                    {
+                        Puts("BlockChangerSteamID Enabled! Attempt connect to license account from nosteam: " + connection.userid);
+                        return "Dont try get access to another player";
+                    }
+                }
             }
             else
-                DataPlayer.AddPlayer(connection.userid, isSteam, connection.ipaddress);
+                DataPlayer.AddPlayer(connection.userid, playerIsLicense, connection.ipaddress);
 
-            bool isNoSteam = !isSteam;
 
-            if (configData.players.BlockVpn)
+            if (configData.players.BlockSmurf)
             {
                 ulong steamid = 0UL;
-                if (isNoSteam && IsSmurf(connection, ref steamid))
-                    return "Your primary account: " + steamid;
+                if (playerIsLicense == false)
+                {
+                    if (IsSmurf(connection, ref steamid))
+                        return "Your primary account: " + steamid;
+                }
+
             }
 
             return null;
-        }
-
-        private void OnPlayerDisconnected(BasePlayer player, string reason)
-        {
         }
 
         private bool IsSmurf(Connection connection, ref ulong userid)
@@ -358,7 +372,7 @@ namespace Oxide.Plugins
             {
                 if (player.Connection.ipaddress.Split(':')[0] == IpAddress)
                 {
-                    return true;
+                    return false;
                 }
             }
 

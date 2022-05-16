@@ -15,11 +15,43 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("AuthMe", "Kaidoz", "1.5.6")]
+    [Info("AuthMe", "Kaidoz", "1.6.0")]
     [Description("Authorization for NoSteam(cracked) players")]
     public class AuthMe : RustPlugin
     {
-        private static readonly ObservableCollection<ulong> ListSteamPlayers = new ObservableCollection<ulong>();
+        public class DataPlayer
+        {
+            public bool Steam;
+            public ulong SteamId;
+            public string LastIp;
+
+            public DataPlayer(ulong id, bool steam, string lastip)
+            {
+                SteamId = id;
+                Steam = steam;
+                LastIp = lastip;
+            }
+
+            public DataPlayer()
+            {
+
+            }
+
+            public static bool FindPlayer(ulong steamid, out DataPlayer dataPlayer)
+            {
+                dataPlayer = null;
+                foreach (var player in _players)
+                    if (player.SteamId == steamid)
+                    {
+                        dataPlayer = player;
+                        return true;
+                    }
+
+                return false;
+            }
+        }
+
+        public static List<DataPlayer> _players = new List<DataPlayer>();
 
         [JsonProperty("Information of players")]
         private static Dictionary<ulong, DataAuthorize> _dataAuthorizes = new Dictionary<ulong, DataAuthorize>();
@@ -34,13 +66,13 @@ namespace Oxide.Plugins
         private void CmdAuthConsole(ConsoleSystem.Arg arg)
         {
             BasePlayer player;
-            if (!ParsePlayer(arg, out player))
+            if (ParsePlayer(arg, out player) == false)
                 return;
 
             if (IsSteamPlayer(player))
                 return;
 
-            if (!_dataAuthorizes.ContainsKey(player.userID))
+            if (_dataAuthorizes.ContainsKey(player.userID) == false)
                 PlayerInit(player);
 
             if (!arg.HasArgs() || arg.FullString.Length == 0)
@@ -88,6 +120,7 @@ namespace Oxide.Plugins
 
             if (buffer.IsAuthed)
                 return;
+
             try
             {
                 if (string.IsNullOrEmpty(buffer.Password))
@@ -228,6 +261,7 @@ namespace Oxide.Plugins
                     return;
                 }
             }
+            SaveData();
 
             ForceAuthorization(player);
             DrawInterface(player);
@@ -368,11 +402,6 @@ namespace Oxide.Plugins
             return null;
         }
 
-        private void OnPlayerDisconnected(BasePlayer player, string reason)
-        {
-            if (ListSteamPlayers.Contains(player.userID)) ListSteamPlayers.Remove(player.userID);
-        }
-
         private void OnPlayerConnected(BasePlayer player)
         {
             if (player.IsReceivingSnapshot)
@@ -455,20 +484,18 @@ namespace Oxide.Plugins
             return true;
         }
 
-        private bool IsSteamPlayer(BasePlayer player)
+        private bool IsSteamPlayer(BasePlayer player, bool repeated = false)
         {
-            if (NoSteamHelper == null)
-                return false;
-
-            if (ListSteamPlayers.Contains(player.userID))
+            DataPlayer dataPlayer;
+            if (DataPlayer.FindPlayer(player.userID, out dataPlayer))
             {
-                return true;
+                return dataPlayer.Steam;
             }
-
-            if (NoSteamHelper.Call("IsPlayerNoSteam", player.userID) == null)
+            else if (repeated == false)
             {
-                ListSteamPlayers.Add(player.userID);
-                return true;
+                _players = Interface.Oxide.DataFileSystem.ReadObject<List<DataPlayer>>("NoSteamHelper/Players");
+
+                return IsSteamPlayer(player, true);
             }
 
             return false;
