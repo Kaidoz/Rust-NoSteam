@@ -15,23 +15,6 @@ Discord: https://discord.gg/Tn3kzbE
 
 ### Api
 #### IsPlayerNoSteam
-Check player
-```C#
-IsPlayerNoSteam(ulong steamid)
-```
-##### Example 
-```C#
-[PluginReference("NoSteamHelper")] 
-private Plugin NoSteamHelper;
-
-bool IsPlayersSteam(BasePlayer player)
-{
-    if(NoSteamHelper.Call("IsPlayerNoSteam", player.userID)==null)
-      return true;
-    return false;
-}
-```
-
 ### Hooks
 #### OnSteamAuthFailed
 Returning a non-null value will not cancel kick player.
