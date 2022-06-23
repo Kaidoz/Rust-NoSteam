@@ -18,6 +18,7 @@
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+RustClient-Patcher/
 x64/
 x86/
 [Aa][Rr][Mm]/
@@ -26,6 +27,9 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+obj/
+bin/
+bin/Debug
 NoSteam/
 ConsoleApp1/
 Harmony-NoSteamFixer/

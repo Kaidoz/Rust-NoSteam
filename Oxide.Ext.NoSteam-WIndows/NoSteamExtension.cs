@@ -2,7 +2,6 @@
 // Filename: NoSteamExtension.cs
 // Last update: 2019.10.06 20:41
 
-using System.Reflection;
 using Oxide.Core;
 using Oxide.Core.Extensions;
 
@@ -19,10 +18,7 @@ namespace Oxide.Ext.NoSteam
 
         public override string Name => "NoSteam";
 
-        public override VersionNumber Version => new VersionNumber(
-            (ushort)Assembly.GetExecutingAssembly().GetName().Version.Major,
-            (ushort)Assembly.GetExecutingAssembly().GetName().Version.Minor,
-            (ushort)Assembly.GetExecutingAssembly().GetName().Version.Build);
+        public override VersionNumber Version => new VersionNumber(1, 0, 7);
 
         public override string Author => "Kaidoz";
 

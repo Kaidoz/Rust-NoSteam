@@ -2,17 +2,12 @@
 // Filename: NoSteamHelper.cs
 // Last update: 2019.10.07 19:20
 
-using System;
-using System.Collections.Generic;
 using ConVar;
 using Network;
 using Newtonsoft.Json;
 using Oxide.Core;
 using Oxide.Core.Libraries;
-using Oxide.Core.Libraries.Covalence;
-using Oxide.Core.Plugins;
-using Oxide.Core.RemoteConsole;
-using UnityEngine;
+using System.Collections.Generic;
 
 namespace Oxide.Plugins
 {
@@ -20,7 +15,20 @@ namespace Oxide.Plugins
     [Description("A plugin that extends nosteam features")]
     internal class NoSteamHelper : RustPlugin
     {
+        public NoSteamHelper()
+        {
+            Instance = this;
+        }
+
+        internal static NoSteamHelper Instance;
+
         #region Variables
+
+        internal static class Permissions
+        {
+            internal static string whitelist => Instance.Name + ".whitelist";
+        }
+
 
         private readonly Dictionary<string, string> DiscordHeaders = new Dictionary<string, string>
         {
@@ -46,8 +54,6 @@ namespace Oxide.Plugins
 
             public class Other
             {
-                [JsonProperty("Enable visibility nosteam players in servers list(DANGER! Risk get ban)")]
-                public bool FakeOnline { get; set; }
 
                 [JsonProperty("AntiBot protector(blocks more than one connection from 1 ip from connect to the server)")]
                 public bool AntiBot { get; set; }
@@ -63,6 +69,15 @@ namespace Oxide.Plugins
 
                 [JsonProperty("Block access to license accounts from nosteam(recommended TRUE)")]
                 public bool BlockChangerSteamID { get; set; }
+
+                [JsonProperty("White List Config")]
+                public WhiteListConfig whiteListConfig { get; set; }
+
+                public class WhiteListConfig
+                {
+                    [JsonProperty("White List enabled(perm: 'nosteamhelper.whitelist'")]
+                    public bool WhiteListEnabled { get; set; }
+                }
             }
 
             public class BlockVPN
@@ -104,6 +119,8 @@ namespace Oxide.Plugins
 
         private void InitData()
         {
+            permission.RegisterPermission(Permissions.whitelist, this);
+
             _players =
                 Interface.Oxide.DataFileSystem.ReadObject<List<DataPlayer>>("NoSteamHelper/Players");
         }
@@ -124,14 +141,17 @@ namespace Oxide.Plugins
             {
                 other = new ConfigData.Other()
                 {
-                    FakeOnline = false,
                     AntiBot = true
                 },
                 players = new ConfigData.Players()
                 {
                     BlockSmurf = true,
                     BlockVpn = false,
-                    BlockChangerSteamID = true
+                    BlockChangerSteamID = true,
+                    whiteListConfig = new ConfigData.Players.WhiteListConfig()
+                    {
+                        WhiteListEnabled = false
+                    }
                 },
                 blockVpn = new ConfigData.BlockVPN()
                 {
@@ -272,14 +292,6 @@ namespace Oxide.Plugins
             InitData();
         }
 
-        private object IsShowCracked()
-        {
-            if (configData.other.FakeOnline == false)
-                return null;
-
-            return true;
-        }
-
         private object OnGameTags(string tags, string online)
         {
             return null;
@@ -295,7 +307,10 @@ namespace Oxide.Plugins
                 if (isExists)
                 {
                     if (dataPlayer.IsSteam() == false)
+                    {
                         IsVpnConnection(player, player.Connection);
+                    }
+
                 }
 
             }
@@ -303,7 +318,10 @@ namespace Oxide.Plugins
 
         private object OnBeginPlayerSession(Connection connection, bool playerIsLicense)
         {
-            if(configData.other.AntiBot)
+            string strLicense = playerIsLicense ? "steam" : "nosteam";
+            Puts($"Player({strLicense}) in process of connecting");
+
+            if (configData.other.AntiBot)
             {
                 if (playerIsLicense == true)
                 {
@@ -311,6 +329,20 @@ namespace Oxide.Plugins
                         return "Steam Auth Failed.";
                 }
             }
+
+            if (playerIsLicense == false)
+            {
+                if (configData.players.whiteListConfig.WhiteListEnabled)
+                {
+                    string strId = connection.userid.ToString();
+
+                    if (permission.UserHasPermission(strId, Permissions.whitelist) == false)
+                    {
+                        return "You are not whitelisted";
+                    }
+                }
+            }
+
 
             DataPlayer dataPlayer;
 

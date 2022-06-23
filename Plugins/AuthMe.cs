@@ -1,24 +1,21 @@
-﻿// Author:  Kaidoz
-// Filename: AuthMe.cs
-// Last update: 2019.10.09 20:32
-
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Globalization;
-using System.IO;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Oxide.Core;
 using Oxide.Core.Plugins;
 using Oxide.Game.Rust.Cui;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("AuthMe", "Kaidoz", "1.6.0")]
-    [Description("Authorization for NoSteam(cracked) players")]
+    [Info("AuthMe", "Kaidoz", "1.6.1")]
+    // UI developed by Skuli Dropek
+    [Description("Authorization for NoSteam(cracked) players. ")]
     public class AuthMe : RustPlugin
     {
+
+        [PluginReference] Plugin ImageLibrary;
         public class DataPlayer
         {
             public bool Steam;
@@ -77,7 +74,7 @@ namespace Oxide.Plugins
 
             if (!arg.HasArgs() || arg.FullString.Length == 0)
             {
-                arg.ReplyWithObject(GetMessageLanguage("Registration.EmptyPassword", player.UserIDString));
+                ErrorRegistrationPanel(player, GetMessageLanguage("Registration.EmptyPassword", player.UserIDString));
                 return;
             }
 
@@ -102,7 +99,7 @@ namespace Oxide.Plugins
 
             if (password != dataAuthorize.Password)
             {
-                arg.ReplyWithObject(GetMessageLanguage("Authorized.BadPassword", player.UserIDString));
+                ErrorRegistrationPanel(player, GetMessageLanguage("Authorized.BadPassword", player.UserIDString));
                 return;
             }
 
@@ -121,25 +118,21 @@ namespace Oxide.Plugins
             if (buffer.IsAuthed)
                 return;
 
-            try
+            if (string.IsNullOrEmpty(buffer.Password))
             {
-                if (string.IsNullOrEmpty(buffer.Password))
-                {
-                    player.ChatMessage(GetMessageLanguage("Help.NoRegistrationWarning", player.UserIDString));
-                    player.SendConsoleCommand(
-                        $"echo {GetMessageLanguage("Help.Registration", player.UserIDString).Replace("{0}", ParseIp(player.net.connection.ipaddress))}");
-
-                    buffer.Timer = timer.Once(10, () => ForceAuthorization(player));
-                    return;
-                }
-
-                player.SetPlayerFlag(BasePlayer.PlayerFlags.ChatMute, true);
+                player.ChatMessage(GetMessageLanguage("Help.NoRegistrationWarning", player.UserIDString));
                 player.SendConsoleCommand(
-                    $"echo {GetMessageLanguage("Help.Authorization", player.UserIDString).Replace("{0}", ParseIp(player.net.connection.ipaddress))}");
-                player.Teleport(buffer.LastPosition);
-                buffer.Timer = timer.Once(2, () => ForceAuthorization(player));
+                    $"echo {GetMessageLanguage("Help.Registration", player.UserIDString).Replace("{0}", ParseIp(player.net.connection.ipaddress))}");
+
+                buffer.Timer = timer.Once(10, () => ForceAuthorization(player));
+                return;
             }
-            catch { }
+
+            player.SetPlayerFlag(BasePlayer.PlayerFlags.ChatMute, true);
+            player.SendConsoleCommand(
+                $"echo {GetMessageLanguage("Help.Authorization", player.UserIDString).Replace("{0}", ParseIp(player.net.connection.ipaddress))}");
+            player.Teleport(buffer.LastPosition);
+            buffer.Timer = timer.Once(2, () => ForceAuthorization(player));
         }
 
         private void InitPlayers()
@@ -182,12 +175,11 @@ namespace Oxide.Plugins
                 ["Authorized.Need"] = "LOG IN",
                 ["Help.Info"] = "All information in console",
 
-                ["Help.Registration"] = "Hello! To sign up, enter auth <your password> in console !\n" +
+                ["Help.Registration"] = "Hello! To sign up!\n" +
                                         "You will not need to enter password from IP: {0}\n" +
                                         "Command: auth <your password>",
-                ["Help.Authorization"] = "Hello! To log in, enter auth <your password> in console!\n" +
-                                         "You will not need to enter password from IP: {0}\n" +
-                                         "Command: auth <your password>"
+                ["Help.Authorization"] = "Hello! To log in!\n" +
+                                         "You will not need to enter password from IP: {0}\n",
             }, this);
 
             #endregion Lang-En
@@ -210,19 +202,16 @@ namespace Oxide.Plugins
 
                 ["Authorized.Successful"] = "Вы успешно авторизовались на сервере!",
 
-                ["Authorized.BadPassword"] = "Вы ввели Authorized.BadPassword, попробуйте ещё раз!" +
-                                             "Команда авторизации: auth <ваш пароль>",
+                ["Authorized.BadPassword"] = "Вы ввели Authorized.BadPassword, попробуйте ещё раз!",
                 ["Registration.Need"] = "Создать пароль",
                 ["Authorized.Need"] = "Авторизироваться",
                 ["Help.Info"] = "Вся  находится в консоле",
 
                 ["Help.Registration"] =
-                    "Приветствую! Чтобы зарегистрироваться - придумай и впиши пароль в консоль!\n" +
-                    "Вам больше не придётся вводить пароль c IP: {0}\n" +
-                    "Команда: auth <придуманный пароль>",
-                ["Help.Authorization"] = "Приветствую! Вы зарегистрированы - впиши свой пароль в консоль!\n" +
-                                         "Вам больше не придётся вводить пароль c IP: {0}\n" +
-                                         "Команда: auth <придуманный пароль>"
+                    "Приветствую! Чтобы зарегистрироваться - придумай и впиши пароль\n" +
+                    "Вам больше не придётся вводить пароль c IP: {0}\n",
+                ["Help.Authorization"] = "Приветствую! Вы зарегистрированы - впиши свой пароль!\n" +
+                                         "Вам больше не придётся вводить пароль c IP: {0}\n"
             }, this, "ru");
 
             #endregion Lang-RU
@@ -264,9 +253,104 @@ namespace Oxide.Plugins
             SaveData();
 
             ForceAuthorization(player);
-            DrawInterface(player);
+            BleedingPanel(player);
+            //DrawInterface(player);
+        }
+        private void BleedingPanel(BasePlayer player)
+        {
+
+            var title = string.IsNullOrEmpty(_dataAuthorizes[player.userID].Password)
+              ? GetMessageLanguage("Registration.Need", player.UserIDString)
+              : GetMessageLanguage("Authorized.Need", player.UserIDString);
+
+            var subtitle = string.IsNullOrEmpty(_dataAuthorizes[player.userID].Password)
+              ? GetMessageLanguage("Help.Registration", player.UserIDString)
+              : GetMessageLanguage("Help.Authorization", player.UserIDString);
+
+            subtitle = subtitle.Replace("{0}", ParseIp(player.net.connection.ipaddress));
+
+            var container = new CuiElementContainer();
+            container.Add(new CuiPanel
+            {
+                CursorEnabled = false,
+                Image = { Color = "0 0 0 0.8" },
+                RectTransform = { AnchorMin = "0 0", AnchorMax = "1 1", OffsetMin = "0 0", OffsetMax = "0 0" }
+            }, "Overlay", Layer);
+
+            container.Add(new CuiLabel
+            {
+                RectTransform = { AnchorMin = "0.5 0.5", AnchorMax = "0.5 0.5", OffsetMin = "-526.75 -37.132", OffsetMax = "526.75 155.132" },
+                Text = { Text = title, Font = "robotocondensed-bold.ttf", FontSize = 100, Align = TextAnchor.MiddleCenter, Color = "1 1 1 1" }
+            }, Layer, "BleedingOutText");
+
+            container.Add(new CuiElement
+            {
+                Name = "InputField_5268Image",
+                Parent = Layer,
+                Components = {
+                    new CuiRawImageComponent { Png = GetImage("InputField") },
+                    new CuiRectTransformComponent { AnchorMin = "0.5 0.5", AnchorMax = "0.5 0.5", OffsetMin = "-289.383 -134.914", OffsetMax = "274.778 -74.934" }
+                }
+            });
+
+            string pass = "";
+
+            container.Add(new CuiElement
+            {
+                Name = "InputField_5268",
+                Parent = Layer,
+                Components = {
+                    new CuiInputFieldComponent { Text = pass, Color = "1 1 1 1", Command = $"auth {pass}", Font = "robotocondensed-bold.ttf", FontSize = 25, Align = TextAnchor.MiddleCenter, CharsLimit = 17, IsPassword = false },
+                    new CuiRectTransformComponent { AnchorMin = "0.5 0.5", AnchorMax = "0.5 0.5", OffsetMin = "-289.383 -134.914", OffsetMax = "274.778 -74.934" }
+                }
+            });
+
+            container.Add(new CuiElement
+            {
+                Name = "Image_2396",
+                Parent = Layer,
+                Components = {
+                    new CuiRawImageComponent { Png = GetImage("Button") },
+                    new CuiRectTransformComponent { AnchorMin = "0.5 0.5", AnchorMax = "0.5 0.5", OffsetMin = "211.222 -124", OffsetMax = "274.778 -84" }
+                }
+            });
+
+            container.Add(new CuiLabel
+            {
+                RectTransform = { AnchorMin = "0.5 0.5", AnchorMax = "0.5 0.5", OffsetMin = "-406.964 -107.75", OffsetMax = "431.676 15.75" },
+                Text = { Text = subtitle, Font = "robotocondensed-bold.ttf", FontSize = 20, Align = TextAnchor.MiddleCenter, Color = "0.7490196 0.7176471 0.7137255 1" },
+            }, Layer, "Label_2648");
+
+            CuiHelper.DestroyUi(player, Layer);
+            CuiHelper.AddUi(player, container);
         }
 
+        private void ErrorRegistrationPanel(BasePlayer player, string message)
+        {
+            var container = new CuiElementContainer();
+            container.Add(new CuiPanel
+            {
+                CursorEnabled = false,
+                Image = { Color = "0 0 0 0.99" },
+                RectTransform = { AnchorMin = "0.5 0.5", AnchorMax = "0.5 0.5", OffsetMin = "-155.754 -76.151", OffsetMax = "144.246 73.849" }
+            }, "Overlay", "ErrorRegistrationPanel");
+
+            container.Add(new CuiLabel
+            {
+                Text = { Text = message, Font = "robotocondensed-regular.ttf", FontSize = 14, Align = TextAnchor.MiddleCenter, Color = "1 1 1 1" },
+                RectTransform = { AnchorMin = "0.5 0.5", AnchorMax = "0.5 0.5", OffsetMin = "-100.945 -17.706", OffsetMax = "108.525 26.522" },
+            }, "ErrorRegistrationPanel", "Label_6853");
+
+            container.Add(new CuiButton
+            {
+                Button = { Color = "1 1 1 0.9", Close = "ErrorRegistrationPanel" },
+                Text = { Text = "OK", Font = "robotocondensed-regular.ttf", FontSize = 14, Align = TextAnchor.MiddleCenter, Color = "0 0 0 1" },
+                RectTransform = { AnchorMin = "0.5 0.5", AnchorMax = "0.5 0.5", OffsetMin = "-50.945 -66.009", OffsetMax = "49.055 -34.409" }
+            }, "ErrorRegistrationPanel", "Button_2446");
+
+            CuiHelper.DestroyUi(player, "ErrorRegistrationPanel");
+            CuiHelper.AddUi(player, container);
+        }
         private void DrawInterface(BasePlayer player)
         {
             CuiHelper.DestroyUi(player, Layer);
@@ -369,10 +453,14 @@ namespace Oxide.Plugins
 
         private void OnServerInitialized()
         {
+
             LoadPlugins();
             LoadData();
             LoadMessages();
             InitPlayers();
+
+            AddImage("https://i.imgur.com/WRHScfF_d.png", "InputField");
+            AddImage("https://i.imgur.com/SvHJNE1.png", "Button");
         }
 
         private void OnServerSave()
@@ -402,15 +490,11 @@ namespace Oxide.Plugins
             return null;
         }
 
-        private void OnPlayerConnected(BasePlayer player)
+        private void OnPlayerSpawn(BasePlayer player)
         {
-            if (player.IsReceivingSnapshot)
-            {
-                timer.Once(0.5f, () => OnPlayerConnected(player));
-                return;
-            }
-            PlayerInit(player);
+            timer.Once(1, () => PlayerInit(player));
         }
+
 
         #endregion Hooks
 
@@ -430,7 +514,6 @@ namespace Oxide.Plugins
         #endregion Data
 
         #region Helper
-
         private static string ParseIp(string input)
         {
             if (input.Contains(":"))
@@ -501,12 +584,15 @@ namespace Oxide.Plugins
             return false;
         }
 
+        private string GetImage(string fileName, ulong skin = 0)
+        {
+            var imageId = (string)plugins.Find("ImageLibrary").CallHook("GetImage", fileName, skin);
+            if (!string.IsNullOrEmpty(imageId))
+                return imageId;
+            return string.Empty;
+        }
+        public bool AddImage(string url, string shortname, ulong skin = 0) => (bool)ImageLibrary?.Call("AddImage", url, shortname, skin);
+
         #endregion Helper
-
-        #region Credits
-
-        // Hougan, the original author of this plugin
-
-        #endregion Credits
     }
 }

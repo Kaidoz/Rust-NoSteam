@@ -1,25 +1,14 @@
-﻿using Facepunch;
-using HarmonyLib;
+﻿using HarmonyLib;
 using Network;
 using Oxide.Core;
 using Oxide.Ext.NoSteam.Helper;
 using Rust.Platform.Steam;
-using SilentOrbit.ProtocolBuffers;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using UnityEngine;
-using Facepunch.Extend;
-using System.Collections;
-using System.Diagnostics;
 using System.Threading.Tasks;
-using Facepunch.Network;
 using AppServer = CompanionServer.Server;
-using System.Runtime.CompilerServices;
-using System.Reflection.Emit;
 
 namespace Oxide.Ext.NoSteam.Patch
 {
@@ -178,24 +167,25 @@ namespace Oxide.Ext.NoSteam.Patch
 
                 if (IsLicense == false)
                 {
-
                     connection.authStatus = "ok";
 
                     OnAuthenticatedLocal.Invoke(null, new object[] { connection });
                     OnAuthenticatedRemote.Invoke(null, new object[] { connection });
                 }
 
-                object reason = Interface.CallHook("OnBeginPlayerSession", userId, IsLicense);
+                __result = true;
+
+                object reason = Interface.CallHook("OnBeginPlayerSession", connection, IsLicense);
+
                 if (reason == null)
                 {
-                    __result = true;
                     return false;
-
                 }
+
 
                 ConnectionAuth.Reject(connection, reason.ToString(), null);
 
-                return true;
+                return false;
             }
         }
 
