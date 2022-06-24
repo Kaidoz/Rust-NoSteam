@@ -1,12 +1,6 @@
-﻿// Author:  Kaidoz
-// Filename: NoSteamHelper.cs
-// Last update: 2019.10.07 19:20
-
-using ConVar;
-using Network;
+﻿using Network;
 using Newtonsoft.Json;
 using Oxide.Core;
-using Oxide.Core.Libraries;
 using System.Collections.Generic;
 
 namespace Oxide.Plugins
@@ -43,21 +37,14 @@ namespace Oxide.Plugins
 
         public class ConfigData
         {
-            [JsonProperty("Other")]
-            public Other other;
+            [JsonProperty("AppId Rust-'252495' Cracked Rust-'480'")]
+            public int? AppId;
 
             [JsonProperty("Players")]
             public Players players;
 
             [JsonProperty("Block VPN Config")]
             public BlockVPN blockVpn;
-
-            public class Other
-            {
-
-                [JsonProperty("AntiBot protector(blocks more than one connection from 1 ip from connect to the server)")]
-                public bool AntiBot { get; set; }
-            }
 
             public class Players
             {
@@ -139,10 +126,7 @@ namespace Oxide.Plugins
         {
             var config = new ConfigData
             {
-                other = new ConfigData.Other()
-                {
-                    AntiBot = true
-                },
+                AppId = 252495,
                 players = new ConfigData.Players()
                 {
                     BlockSmurf = true,
@@ -180,6 +164,8 @@ namespace Oxide.Plugins
 
             public static void AddPlayer(ulong id, bool steam, string lastip)
             {
+                lastip = lastip.Split(':')[1];
+
                 _players.Add(new DataPlayer(id, steam, lastip));
                 SaveDataPlayers();
             }
@@ -208,35 +194,6 @@ namespace Oxide.Plugins
                 return Steam;
             }
         }
-
-        #region Discord
-
-        #region Class
-
-        private class ContentType
-        {
-            public string content;
-            public string username;
-            public string avatar_url;
-
-            public ContentType(string text, string name = null, string avatar = null)
-            {
-                content = text;
-                username = name;
-                avatar_url = avatar;
-            }
-        }
-
-        #endregion Class
-
-
-        private void SendMsgDiscord(ContentType contentType)
-        {
-            webrequest.Enqueue("discord web hook", JsonConvert.SerializeObject(contentType), (code, response) => { }, this, RequestMethod.POST, DiscordHeaders);
-        }
-
-
-        #endregion Discord
 
         #region VPN
 
@@ -281,29 +238,33 @@ namespace Oxide.Plugins
 
         #region Hooks
 
-        private void OnServerInitialized(bool loaded)
+        private void Init()
         {
             LoadConfigVariables();
             SaveConfig();
-        }
 
-        private void Init()
-        {
             InitData();
+
+            InitAppId();
         }
 
-        private object OnGameTags(string tags, string online)
+        private void InitAppId()
         {
-            return null;
+            Rust.Defines.appID = configData.AppId != null ? (uint)configData.AppId : 0;
+
+            Puts(configData.AppId.ToString());
         }
 
         private void OnPlayerConnected(BasePlayer player)
         {
+            DataPlayer dataPlayer;
+            var isExists = DataPlayer.FindPlayer(player.userID, out dataPlayer);
+
+            if (isExists == false)
+                PrintWarning("No data player: " + player.UserIDString);
+
             if (configData.players.BlockVpn)
             {
-                DataPlayer dataPlayer;
-                var isExists = DataPlayer.FindPlayer(player.userID, out dataPlayer);
-
                 if (isExists)
                 {
                     if (dataPlayer.IsSteam() == false)
@@ -321,15 +282,6 @@ namespace Oxide.Plugins
             string strLicense = playerIsLicense ? "steam" : "nosteam";
             Puts($"Player({strLicense}) in process of connecting");
 
-            if (configData.other.AntiBot)
-            {
-                if (playerIsLicense == true)
-                {
-                    if (CheckIsValidPlayer(connection) == false)
-                        return "Steam Auth Failed.";
-                }
-            }
-
             if (playerIsLicense == false)
             {
                 if (configData.players.whiteListConfig.WhiteListEnabled)
@@ -342,7 +294,6 @@ namespace Oxide.Plugins
                     }
                 }
             }
-
 
             DataPlayer dataPlayer;
 
@@ -395,25 +346,6 @@ namespace Oxide.Plugins
             }
 
             return false;
-        }
-
-        private bool CheckIsValidPlayer(Connection connection)
-        {
-            string IpAddress = connection.ipaddress.Split(':')[0];
-            foreach (var player in BasePlayer.activePlayerList)
-            {
-                if (player.Connection.ipaddress.Split(':')[0] == IpAddress)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        private void SendConsoleCommand(string cmd)
-        {
-            Server.Command(cmd);
         }
 
         #endregion Hooks

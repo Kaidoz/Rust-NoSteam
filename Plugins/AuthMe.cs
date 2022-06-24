@@ -202,7 +202,7 @@ namespace Oxide.Plugins
 
                 ["Authorized.Successful"] = "Вы успешно авторизовались на сервере!",
 
-                ["Authorized.BadPassword"] = "Вы ввели Authorized.BadPassword, попробуйте ещё раз!",
+                ["Authorized.BadPassword"] = "Вы ввели неверный пароль, попробуйте ещё раз!",
                 ["Registration.Need"] = "Создать пароль",
                 ["Authorized.Need"] = "Авторизироваться",
                 ["Help.Info"] = "Вся  находится в консоле",
