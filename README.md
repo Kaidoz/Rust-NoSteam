@@ -9,7 +9,7 @@ Discord: https://discord.gg/Tn3kzbE
 - BTC: 1DNEbR5Yk6a6NXDuQHB2XGAAjaqL8NXvUc
 
 ### Info
-- Protected steam players against hack(fake steamid)
+- Protect from spoof steamid
 - Nosteam players are not displayed in server list to avoid ban
 - Kicked players if use developers ids
 
