@@ -32,7 +32,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AuthMe.cs" />
     <Compile Include="NoSteamHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -163,6 +162,7 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.PhysicsModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="UnityEngine.TextCoreModule">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\UnityEngine.TextCoreModule.dll</HintPath>
     </Reference>

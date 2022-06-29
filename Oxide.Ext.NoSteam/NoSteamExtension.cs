@@ -14,7 +14,7 @@ namespace Oxide.Ext.NoSteam
     {
         private bool _loaded;
 
-        public static bool DEBUG = true;
+        public static bool DEBUG = false;
 
         public NoSteamExtension(ExtensionManager manager) : base(manager)
         {
@@ -23,7 +23,7 @@ namespace Oxide.Ext.NoSteam
 
         public override string Name => "NoSteam";
 
-        public override VersionNumber Version => new VersionNumber(2, 0, 0);
+        public override VersionNumber Version => new VersionNumber(2, 0, 3);
 
         public override string Author => "Kaidoz";
 
@@ -37,42 +37,49 @@ namespace Oxide.Ext.NoSteam
                 return;
 
             _loaded = true;
+            LoadSteamwork();
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             Loader.NoSteam.InitPlugin();
-
         }
 
         private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
         {
-#if DEBUG
-            Interface.GetMod().LogDebug("CurrentDomain_AssemblyResolve1");
 
-#endif
             if (args.Name.Contains("Facepunch.Steamworks") == false)
                 return null;
 
             if (AssemblySteamworks != null)
                 return AssemblySteamworks;
 
-#if DEBUG
-            Interface.GetMod().LogDebug("CurrentDomain_AssemblyResolve2");
-
-#endif
             string pathWin = Path.Combine(Interface.GetMod().ExtensionDirectory, "Facepunch.Steamworks.Win64.dll");
 
             string pathLinux = Path.Combine(Interface.GetMod().ExtensionDirectory, "Facepunch.Steamworks.Posix.dll");
 
             if (File.Exists(pathWin))
-                AssemblySteamworks = Assembly.UnsafeLoadFrom(pathWin);
+                LoadSteamworks(pathWin);
             else
                 if (File.Exists(pathLinux))
-                AssemblySteamworks = Assembly.UnsafeLoadFrom(pathLinux);
+                LoadSteamworks(pathLinux);
 
-#if DEBUG
-            Interface.GetMod().LogDebug("CurrentDomain_AssemblyResolve3");
-
-#endif
             return AssemblySteamworks;
+        }
+
+        private void LoadSteamwork()
+        {
+            string pathWin = Path.Combine(Interface.GetMod().ExtensionDirectory, "Facepunch.Steamworks.Win64.dll");
+
+            string pathLinux = Path.Combine(Interface.GetMod().ExtensionDirectory, "Facepunch.Steamworks.Posix.dll");
+
+            if (File.Exists(pathWin))
+                LoadSteamworks(pathWin);
+            else
+                if (File.Exists(pathLinux))
+                LoadSteamworks(pathLinux);
+        }
+
+        private void LoadSteamworks(string path)
+        {
+            AssemblySteamworks = Assembly.UnsafeLoadFrom(path);
         }
 
         public override void OnModLoad()

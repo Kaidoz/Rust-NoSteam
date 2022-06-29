@@ -19,11 +19,13 @@ namespace Oxide.Ext.NoSteam.Loader
 
         public static void InitPlugin()
         {
-            Output("[NoSteam] Author: Kaidoz\n Telegram: Kaidoz\n Github: github.com/Kaidoz/Rust-NoSteam\n Discord:discord.gg/Tn3kzbE");
+            Output("[NoSteam] Author: Kaidoz" +
+                "\n Discord:discord.gg/Tn3kzbE" +
+                "\n Github: github.com/Kaidoz/Rust-NoSteam");
             Init();
             try
             {
-                Patch.Core.Do();
+                Core.Start();
             }
             catch (Exception ex)
             {
