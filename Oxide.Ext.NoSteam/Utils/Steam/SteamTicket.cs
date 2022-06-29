@@ -12,15 +12,6 @@ namespace Oxide.Ext.NoSteam.Utils.Steam
             Unkown
         }
 
-        private static readonly byte[] TokenHeader =
-        {
-            84,
-            79,
-            75,
-            69,
-            78
-        };
-
         public ulong SteamId;
 
         public Ticket Ticket;
@@ -60,7 +51,7 @@ namespace Oxide.Ext.NoSteam.Utils.Steam
         }
         private bool IsCrack => Ticket.Token.AppID == 480;
 
-        private bool IsLicense => Ticket.Token.AppID == 252495;
+        private bool IsLicense => Ticket.Token.AppID == 252490;
 
 
         public ClientVersion clientVersion;
