@@ -1,4 +1,5 @@
 # Rust-NoSteam
+Author in no way supports piracy in any form. The plugin does not allow you to profit from nosteam and allows people to play Rust without being able to buy the game.
 Discord: https://discord.gg/Tn3kzbE
 
 ### Donations
