@@ -15,6 +15,8 @@ Discord: https://discord.gg/Tn3kzbE
 - Nosteam players are not displayed in server list to avoid ban
 - Kicked players if use developers ids
 
+OUTDATED INFORMATION!
+
 ### Api
 #### IsPlayerNoSteam
 Check player
