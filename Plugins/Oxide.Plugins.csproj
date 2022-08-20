@@ -36,9 +36,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="Accessibility" />
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Assembly-CSharp.dll</HintPath>

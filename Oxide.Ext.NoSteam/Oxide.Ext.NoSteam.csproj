@@ -38,9 +38,8 @@
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="0Harmony, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Lib.Harmony.2.2.1\lib\net48\0Harmony.dll</HintPath>
+    <Reference Include="0Harmony, Version=2.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Lib.Harmony.2.2.2\lib\net48\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\..\Games\Rust\Server\rustds\RustDedicated_Data\Managed\Assembly-CSharp.dll</HintPath>
@@ -166,6 +165,7 @@
     <Compile Include="Patches\BasePlayerPatch.cs" />
     <Compile Include="Patches\EacPatch.cs" />
     <Compile Include="Patches\OtherPatch.cs" />
+    <Compile Include="Patches\OxidePatch.cs" />
     <Compile Include="Patches\ServerPatch.cs" />
     <Compile Include="Patches\SteamPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

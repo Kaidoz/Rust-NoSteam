@@ -28,7 +28,7 @@ namespace Oxide.Ext.NoSteam.Patches
             Core.HarmonyInstance.Patch(OnBeginPlayerSeesion, null, harmonyMethod);
         }
 
-        private static readonly Regex steamCountRegex = new Regex(@"cp?.\d", RegexOptions.Compiled);
+        private static readonly Regex steamCountRegex = new Regex(@"cp*[0-9]+", RegexOptions.Compiled);
 
         [HarmonyPatch(typeof(SteamServer))]
         [HarmonyPatch("set_GameTags")]
@@ -39,8 +39,14 @@ namespace Oxide.Ext.NoSteam.Patches
             {
                 int count = Core.CountSteamPlayer();
 
+                object intValue = Interface.CallHook("OnSetTagsCountPlayers", count);
+
+                if (intValue != null && intValue is int)
+                    count = (int)intValue;
+
                 string strCount = "cp" + count;
 
+                
                 value = steamCountRegex.Replace(value, strCount);
             }
         }

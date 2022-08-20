@@ -37,7 +37,10 @@ namespace Oxide.Ext.NoSteam.Patches
                 // Поддержка так называемого говна куска - GameStores, украинского ватника
                 string strCountGs = "fl" + countNoSteam;
 
-                ConVar.Server.tags = strHasNoSteam + "," + strCountAll + "," + strCountGs;
+                if (string.IsNullOrEmpty(ConVar.Server.tags))
+                    ConVar.Server.tags = strHasNoSteam + "," + strCountAll + "," + strCountGs;
+                else
+                    ConVar.Server.tags += "," + strHasNoSteam + "," + strCountAll + "," + strCountGs;
             }
         }
     }
