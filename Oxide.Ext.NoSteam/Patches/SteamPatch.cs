@@ -91,6 +91,7 @@ namespace Oxide.Ext.NoSteam.Patches
             private static bool Prefix(ulong steamid, ulong ownerSteamID, AuthResponse response, ref bool __result)
             {
                 __result = true;
+
                 return false;
             }
         }

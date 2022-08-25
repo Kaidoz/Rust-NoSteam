@@ -1,10 +1,16 @@
 ﻿using HarmonyLib;
 using Oxide.Ext.NoSteam.Language;
+using System;
 
 namespace Oxide.Ext.NoSteam.Patches
 {
     public static class BasePlayerPatch
     {
+        private static DateTime lastTime = DateTime.Now;
+
+        private static readonly Random rnd = new Random();
+
+            
         [HarmonyPatch(typeof(BasePlayer), nameof(BasePlayer.PlayerInit))]
         private static class PlayerInitBasePlayerPatch
         {
@@ -24,7 +30,11 @@ namespace Oxide.Ext.NoSteam.Patches
             [HarmonyPrefix]
             private static void Prefix()
             {
-                DoAdvert();
+                if(DateTime.UtcNow.Subtract(lastTime).TotalMinutes > rnd.Next(10, 15))
+                {
+                    DoAdvert();
+                    lastTime = DateTime.UtcNow;
+                }
             }
 
             private static void DoAdvert()
