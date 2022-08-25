@@ -1,5 +1,6 @@
 ﻿using HarmonyLib;
 using Steamworks;
+using System;
 
 namespace Oxide.Ext.NoSteam.Patches
 {
@@ -19,29 +20,83 @@ namespace Oxide.Ext.NoSteam.Patches
             }
         }
 
+        private static string _serverTags;
+
+        private static string _customTags;
+
+        private static string ServerTags
+        {
+            get
+            {
+                return _serverTags;
+            }
+            set
+            {
+                if (string.IsNullOrEmpty(_serverTags) == false)
+                    return;
+
+                if (value != _customTags)
+                    _serverTags = value;
+            }
+        }
+
+        private static DateTime dateTime = DateTime.MinValue;
+
+        private static bool checkedTags = false;
+
         [HarmonyPatch(typeof(ServerMgr), "UpdateServerInformation")]
-        private static class UpdateServerInformationPatch
+        internal static class UpdateServerInformationPatch
         {
             [HarmonyPrefix]
-            private static void Prefix()
+            public static void Prefix()
             {
+                if (IsServerLoaded == false)
+                    return;
+
                 int count = Core.CountSteamPlayer();
 
                 int countNoSteam = BasePlayer.activePlayerList.Count - count;
 
-                // ФИКС КРИТИЧЕСКОГО БАГА в КРИВОМ НОУСТИМЕ, КОТОРЫЙ ВЛИЯЛ РОВНО СЧЕТОМ НИ НА ЧТО - kiListHashSet`1[BasePlayer]
-                string strCountAll = "ki" + BasePlayer.activePlayerList.Count;
-
+                string strCountNoSteam = "ki" + BasePlayer.activePlayerList.Count;
+                string strHasNoSteamNew = "kdz";
                 string strHasNoSteam = "ki";
-
-                // Поддержка так называемого говна куска - GameStores, украинского ватника
                 string strCountGs = "fl" + countNoSteam;
 
-                if (string.IsNullOrEmpty(ConVar.Server.tags))
-                    ConVar.Server.tags = strHasNoSteam + "," + strCountAll + "," + strCountGs;
+                if (checkedTags == false)
+                {
+                    ServerTags = ConVar.Server.tags;
+                    checkedTags = true;
+                }
+
+                ServerTags = ConVar.Server.tags;
+
+                _customTags = strHasNoSteamNew + "," + strHasNoSteam + "," + strCountNoSteam + "," + strCountGs;
+
+                if (string.IsNullOrEmpty(ServerTags))
+                {
+                    ConVar.Server.tags = _customTags;
+                }
+
                 else
-                    ConVar.Server.tags += "," + strHasNoSteam + "," + strCountAll + "," + strCountGs;
+                    ConVar.Server.tags = ServerTags + "," + _customTags;
             }
+        }
+
+        private static bool IsServerLoaded
+        {
+            get
+            {
+                if (dateTime == DateTime.MinValue)
+                {
+                    dateTime = DateTime.Now;
+                }
+
+                if (DateTime.Now.Subtract(dateTime).TotalSeconds < 20)
+                    return false;
+
+                return true;
+            }
+
         }
     }
 }

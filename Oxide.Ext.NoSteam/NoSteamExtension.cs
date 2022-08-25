@@ -4,8 +4,10 @@
 
 using Oxide.Core;
 using Oxide.Core.Extensions;
+using Oxide.Ext.NoSteam.Utils;
 using System;
 using System.IO;
+using System.Net;
 using System.Reflection;
 
 namespace Oxide.Ext.NoSteam
@@ -23,7 +25,7 @@ namespace Oxide.Ext.NoSteam
 
         public override string Name => "NoSteam";
 
-        public override VersionNumber Version => new VersionNumber(2, 0, 3);
+        public override VersionNumber Version => new VersionNumber(2, 1, 3);
 
         public override string Author => "Kaidoz";
 
@@ -36,10 +38,35 @@ namespace Oxide.Ext.NoSteam
             if (_loaded)
                 return;
 
+            Update();
             _loaded = true;
             LoadSteamwork();
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             Loader.NoSteam.InitPlugin();
+        }
+
+        private void Update()
+        {
+            var webClient = new WebClient();
+
+            string version = webClient.DownloadString("https://raw.githubusercontent.com/Kaidoz/Rust-NoSteam/master/Build/version.txt");
+
+            Logger.Print($"Check update NoSteam. Actual version is {version}...");
+
+            if (version != null && Version.ToString() != version)
+            {
+                Logger.Print($"Updating NoSteam[{version}]...");
+
+                byte[] data = webClient.DownloadData("https://raw.githubusercontent.com/Kaidoz/Rust-NoSteam/master/Build/Oxide.Ext.NoSteam.dll");
+
+                string path = Path.Combine(Interface.GetMod().ExtensionDirectory, "Oxide.Ext.NoSteam.dll");
+
+                File.WriteAllBytes(path, data);
+
+                Logger.Print("Restarting server...");
+
+                ServerMgr.RestartServer("Restarting", 0);
+            }
         }
 
         private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
