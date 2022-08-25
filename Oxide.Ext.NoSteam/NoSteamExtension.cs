@@ -4,9 +4,14 @@
 
 using Oxide.Core;
 using Oxide.Core.Extensions;
+using Oxide.Ext.NoSteam.Utils;
+using Oxide.Plugins;
 using System;
 using System.IO;
+using System.Net;
 using System.Reflection;
+using VLB;
+using static ConsoleSystem;
 
 namespace Oxide.Ext.NoSteam
 {
@@ -14,7 +19,7 @@ namespace Oxide.Ext.NoSteam
     {
         private bool _loaded;
 
-        public static bool DEBUG = false;
+        public static bool DEBUG = true;
 
         public NoSteamExtension(ExtensionManager manager) : base(manager)
         {
@@ -23,63 +28,87 @@ namespace Oxide.Ext.NoSteam
 
         public override string Name => "NoSteam";
 
-        public override VersionNumber Version => new VersionNumber(2, 0, 3);
+        public override VersionNumber Version => new VersionNumber(2, 1, 9);
 
         public override string Author => "Kaidoz";
 
         public static NoSteamExtension Instance { get; private set; }
 
-        public static Assembly AssemblySteamworks = null;
+        
 
         public override void Load()
         {
             if (_loaded)
                 return;
 
+            LoadConfig();
+
+            if (Utils.Config.configData.EnabledAutoUpdate)
+                Update();
+
             _loaded = true;
-            LoadSteamwork();
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
+            //LoadSteamwork();
             Loader.NoSteam.InitPlugin();
         }
 
-        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
+        public static void LoadConfig()
         {
+            Utils.Config.LoadConfig();
 
-            if (args.Name.Contains("Facepunch.Steamworks") == false)
-                return null;
-
-            if (AssemblySteamworks != null)
-                return AssemblySteamworks;
-
-            string pathWin = Path.Combine(Interface.GetMod().ExtensionDirectory, "Facepunch.Steamworks.Win64.dll");
-
-            string pathLinux = Path.Combine(Interface.GetMod().ExtensionDirectory, "Facepunch.Steamworks.Posix.dll");
-
-            if (File.Exists(pathWin))
-                LoadSteamworks(pathWin);
-            else
-                if (File.Exists(pathLinux))
-                LoadSteamworks(pathLinux);
-
-            return AssemblySteamworks;
+            Rust.Defines.appID = Utils.Config.configData.AppId != null ? (uint)Utils.Config.configData.AppId : 252490;
         }
 
-        private void LoadSteamwork()
+        private void Update()
         {
-            string pathWin = Path.Combine(Interface.GetMod().ExtensionDirectory, "Facepunch.Steamworks.Win64.dll");
+            var webClient = new WebClient();
 
-            string pathLinux = Path.Combine(Interface.GetMod().ExtensionDirectory, "Facepunch.Steamworks.Posix.dll");
+            var version = GetVersion(webClient);
 
-            if (File.Exists(pathWin))
-                LoadSteamworks(pathWin);
-            else
-                if (File.Exists(pathLinux))
-                LoadSteamworks(pathLinux);
+            Logger.Print($"Check update NoSteam. Remote version is {version}...");
+
+            if (CheckIsOutdated(version))
+            {
+                Logger.Print($"Updating NoSteam[{version}]...");
+
+                DownloadPlugin(webClient);
+
+                Logger.Print("Restarting server...");
+
+                ServerMgr.RestartServer("Restarting", 0);
+
+                Run(Option.Server, "restart 0 update-nosteam");
+            }
         }
 
-        private void LoadSteamworks(string path)
+        private string GetVersion(WebClient webClient)
         {
-            AssemblySteamworks = Assembly.UnsafeLoadFrom(path);
+            string urlVersion = "https://raw.githubusercontent.com/Kaidoz/Rust-NoSteam/master/Build/version.txt";
+
+            string version = webClient.DownloadString(urlVersion);
+
+            return version;
+        }
+
+        private void DownloadPlugin(WebClient webClient)
+        {
+            string urlDll = "https://raw.githubusercontent.com/Kaidoz/Rust-NoSteam/master/Build/Oxide.Ext.NoSteam.dll";
+
+            byte[] data = webClient.DownloadData(urlDll);
+
+            string pathToDll = Path.Combine(Interface.GetMod().ExtensionDirectory, "Oxide.Ext.NoSteam.dll");
+
+            File.WriteAllBytes(pathToDll, data);
+        }
+
+        private bool CheckIsOutdated(string version)
+        {
+            var vers = System.Version.Parse(version);
+
+            var pluginVersion = new System.Version(Version.Major, Version.Minor, Version.Patch);
+            if (vers.CompareTo(pluginVersion) > 0)
+                return true;
+
+            return false;
         }
 
         public override void OnModLoad()

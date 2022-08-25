@@ -1,15 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.2.32526.322
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33027.164
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oxide.Plugins", "Plugins\Oxide.Plugins.csproj", "{CAE13537-5661-4660-9CEF-E865FA190C09}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oxide.Ext.NoSteam", "Oxide.Ext.NoSteam\Oxide.Ext.NoSteam.csproj", "{AC2E1A54-9FC8-4A08-82B0-AD462C65FCC9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extension", "Extension", "{19BC2003-5148-4704-8893-DD4D75B3CC38}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{D35EA8BC-9E34-48F1-99B1-4E7F189F8FF8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{BFCD6D9C-5230-4F5C-ACFF-64AD4CAA78EA}"
+	ProjectSection(SolutionItems) = preProject
+		Build\version.txt = Build\version.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oxide.Ext.NoSteam", "Oxide.Ext.NoSteam\Oxide.Ext.NoSteam.csproj", "{2ED2D754-D94C-4678-9C27-7932F08DC910}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,21 +32,21 @@ Global
 		{CAE13537-5661-4660-9CEF-E865FA190C09}.Release|Any CPU.Build.0 = Release|Any CPU
 		{CAE13537-5661-4660-9CEF-E865FA190C09}.Release|x64.ActiveCfg = Release|Any CPU
 		{CAE13537-5661-4660-9CEF-E865FA190C09}.Release|x64.Build.0 = Release|Any CPU
-		{AC2E1A54-9FC8-4A08-82B0-AD462C65FCC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AC2E1A54-9FC8-4A08-82B0-AD462C65FCC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AC2E1A54-9FC8-4A08-82B0-AD462C65FCC9}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{AC2E1A54-9FC8-4A08-82B0-AD462C65FCC9}.Debug|x64.Build.0 = Debug|Any CPU
-		{AC2E1A54-9FC8-4A08-82B0-AD462C65FCC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AC2E1A54-9FC8-4A08-82B0-AD462C65FCC9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AC2E1A54-9FC8-4A08-82B0-AD462C65FCC9}.Release|x64.ActiveCfg = Release|Any CPU
-		{AC2E1A54-9FC8-4A08-82B0-AD462C65FCC9}.Release|x64.Build.0 = Release|Any CPU
+		{2ED2D754-D94C-4678-9C27-7932F08DC910}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ED2D754-D94C-4678-9C27-7932F08DC910}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ED2D754-D94C-4678-9C27-7932F08DC910}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2ED2D754-D94C-4678-9C27-7932F08DC910}.Debug|x64.Build.0 = Debug|Any CPU
+		{2ED2D754-D94C-4678-9C27-7932F08DC910}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ED2D754-D94C-4678-9C27-7932F08DC910}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ED2D754-D94C-4678-9C27-7932F08DC910}.Release|x64.ActiveCfg = Release|Any CPU
+		{2ED2D754-D94C-4678-9C27-7932F08DC910}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CAE13537-5661-4660-9CEF-E865FA190C09} = {D35EA8BC-9E34-48F1-99B1-4E7F189F8FF8}
-		{AC2E1A54-9FC8-4A08-82B0-AD462C65FCC9} = {19BC2003-5148-4704-8893-DD4D75B3CC38}
+		{2ED2D754-D94C-4678-9C27-7932F08DC910} = {19BC2003-5148-4704-8893-DD4D75B3CC38}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A68D2B4B-76C9-4DCC-848B-E266047F2F53}

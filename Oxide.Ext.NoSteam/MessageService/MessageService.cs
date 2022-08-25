@@ -47,10 +47,12 @@ namespace Oxide.Ext.NoSteam.Language
         private static void ParseMessages()
         {
             MessagesList.Add(new Message(nameof(Messages.AdvertMessage), "Сервер использует NoSteam by Kaidoz. \n" +
-                    "Discord: discord.gg/Tn3kzbE\n", 
+                    "Discord: discord.gg/Tn3kzbE\n" +
+                    "Лаунчер: discord.gg/qxZwR8zDPu\n",
 
                     "Server uses NoSteam by Kaidoz. \n" +
-                    "Discord: discord.gg/Tn3kzbE\n"));
+                    "Discord: discord.gg/Tn3kzbE\n" +
+                    "Launcher: discord.gg/qxZwR8zDPu\n"));
         }
 
         internal class Message

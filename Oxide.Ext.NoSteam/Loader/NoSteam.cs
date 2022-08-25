@@ -22,6 +22,7 @@ namespace Oxide.Ext.NoSteam.Loader
             Output("[NoSteam] Author: Kaidoz" +
                 "\n Discord:discord.gg/Tn3kzbE" +
                 "\n Github: github.com/Kaidoz/Rust-NoSteam");
+
             Init();
             try
             {
@@ -36,6 +37,7 @@ namespace Oxide.Ext.NoSteam.Loader
         private static void Init()
         {
             Server.encryption = 0;
+            Server.secure = true;
         }
 
         public static void Output(string text)

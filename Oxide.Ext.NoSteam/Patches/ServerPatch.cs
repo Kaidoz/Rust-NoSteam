@@ -1,5 +1,5 @@
-﻿using HarmonyLib;
-using Steamworks;
+﻿using Harmony;
+using System;
 
 namespace Oxide.Ext.NoSteam.Patches
 {
@@ -19,29 +19,29 @@ namespace Oxide.Ext.NoSteam.Patches
             }
         }
 
-        [HarmonyPatch(typeof(ServerMgr), "UpdateServerInformation")]
-        private static class UpdateServerInformationPatch
+
+        [HarmonyPatch(typeof(ServerMgr), nameof(ServerMgr.GamemodeName))]
+        internal static class UpdateServerInformationPatch
         {
-            [HarmonyPrefix]
-            private static void Prefix()
+            [HarmonyPostfix]
+            public static void Postfix(ref string __result)
             {
                 int count = Core.CountSteamPlayer();
 
                 int countNoSteam = BasePlayer.activePlayerList.Count - count;
 
-                // ФИКС КРИТИЧЕСКОГО БАГА в КРИВОМ НОУСТИМЕ, КОТОРЫЙ ВЛИЯЛ РОВНО СЧЕТОМ НИ НА ЧТО - kiListHashSet`1[BasePlayer]
-                string strCountAll = "ki" + BasePlayer.activePlayerList.Count;
-
+                string strCountNoSteam = "ki" + BasePlayer.activePlayerList.Count;
+                string strHasNoSteamNew = "kdz";
                 string strHasNoSteam = "ki";
-
-                // Поддержка так называемого говна куска - GameStores, украинского ватника
                 string strCountGs = "fl" + countNoSteam;
 
-                if (string.IsNullOrEmpty(ConVar.Server.tags))
-                    ConVar.Server.tags = strHasNoSteam + "," + strCountAll + "," + strCountGs;
-                else
-                    ConVar.Server.tags += "," + strHasNoSteam + "," + strCountAll + "," + strCountGs;
+
+                string tags = "," + strHasNoSteamNew + "," + strHasNoSteam + "," + strCountNoSteam + "," + strCountGs;
+
+
+                __result += tags;
             }
         }
+
     }
 }

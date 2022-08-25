@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+﻿using Harmony;
 using Network;
 using Oxide.Core;
 using System;
@@ -70,6 +70,7 @@ namespace Oxide.Ext.NoSteam.Patches
             public static bool Prefix(ref object __result, string hookname, params object[] args)
             {
                 bool result = OxidePatch.OnHookOxide?.Invoke(ref __result, hookname, args) == false;
+
                 if (result)
                     return false;
 

@@ -1,22 +1,39 @@
-﻿using HarmonyLib;
+﻿using Harmony;
 using Oxide.Ext.NoSteam.Language;
+using Oxide.Ext.NoSteam.Utils;
+using System;
+using System.Linq;
 
 namespace Oxide.Ext.NoSteam.Patches
 {
     public static class BasePlayerPatch
     {
-        [HarmonyPatch(typeof(BasePlayer), nameof(BasePlayer.PlayerInit))]
+        private static DateTime lastTime = DateTime.Now;
+
+        private static readonly Random rnd = new Random();
+
+        
+        [HarmonyPatch(
+            typeof(EACServer), 
+            nameof(EACServer.OnStartLoading)
+            )]
         private static class PlayerInitBasePlayerPatch
         {
-            [HarmonyPostfix]
-            private static void Postfix(BasePlayer __instance)
+            [HarmonyPrefix]
+            private static void Prefix(Network.Connection connection)
             {
-                if (Core.CheckIsSteamConnection(__instance.userID) == false)
+                var player = BasePlayer.FindByID(connection.userid);
+
+                if (player == null)
+                    return;
+
+                if (Core.CheckIsSteamConnection(player.userID) == false)
                 {
-                    __instance.ChatMessage(MessageService.Get(__instance.userID, nameof(Messages.AdvertMessage)));
+                    player.ChatMessage(MessageService.Get(player.userID, nameof(Messages.AdvertMessage)));
                 }
             }
         }
+
 
         [HarmonyPatch(typeof(SaveRestore), "DoAutomatedSave")]
         private static class DoAutomatedSavePatch
@@ -24,7 +41,13 @@ namespace Oxide.Ext.NoSteam.Patches
             [HarmonyPrefix]
             private static void Prefix()
             {
-                DoAdvert();
+                if (DateTime.UtcNow.Subtract(lastTime).TotalMinutes > rnd.Next(10, 15))
+                {
+                    if (Config.configData.CheckPatronCode == false)
+                        DoAdvert();
+
+                    lastTime = DateTime.UtcNow;
+                }
             }
 
             private static void DoAdvert()
@@ -36,7 +59,8 @@ namespace Oxide.Ext.NoSteam.Patches
 
                     if (Core.CheckIsSteamConnection(player.userID) == false)
                     {
-                        player.ChatMessage(MessageService.Get(player.userID, nameof(Messages.AdvertMessage)));
+                        if (Config.configData.CheckPatronCode == false)
+                            player.ChatMessage(MessageService.Get(player.userID, nameof(Messages.AdvertMessage)));
                     }
                 }
 

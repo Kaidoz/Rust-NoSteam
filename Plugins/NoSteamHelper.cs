@@ -9,16 +9,17 @@ using static Oxide.Plugins.NoSteamHelperModels;
 
 namespace Oxide.Plugins
 {
-    [Info("NoSteamHelper", "Kaidoz", "1.2.0")]
+    [Info("NoSteamHelper", "Kaidoz", "1.2.2")]
     [Description("A plugin that extends nosteam features")]
-    internal class NoSteamHelper : RustPlugin
+    // Support and other - https://discord.gg/snm7NGCAwH
+    public class NoSteamHelper : RustPlugin
     {
         public NoSteamHelper()
         {
             Instance = this;
         }
 
-        internal static NoSteamHelper Instance;
+        public static NoSteamHelper Instance;
 
         #region Variables
 
@@ -27,7 +28,7 @@ namespace Oxide.Plugins
             internal static string whitelist => Instance.Name + ".whitelist";
         }
 
-        public static ConfigData ConfigData;
+        public static ConfigData configData;
 
         #endregion Variables
 
@@ -52,7 +53,6 @@ namespace Oxide.Plugins
             var config = new ConfigData
             {
                 Version = this.Version.ToString(),
-                AppId = 252490,
                 players = new ConfigData.Players()
                 {
                     BlockSmurf = true,
@@ -63,6 +63,7 @@ namespace Oxide.Plugins
                         WhiteListEnabled = false
                     }
                 },
+                mirror = new ConfigData.Mirror(),
                 blockVpn = new ConfigData.BlockVPN()
                 {
                     Key = "Your key"
@@ -73,9 +74,9 @@ namespace Oxide.Plugins
 
         private void LoadConfigVariables()
         {
-            ConfigData = Config.ReadObject<ConfigData>();
+            configData = Config.ReadObject<ConfigData>();
 
-            if (ConfigData.Version != this.Version.ToString())
+            if (configData.Version != this.Version.ToString())
             {
                 Puts("Created default config");
                 LoadDefaultConfig();
@@ -104,12 +105,18 @@ namespace Oxide.Plugins
                 SaveConfig();
 
                 InitData();
-
-                NoSteamHelperController.InitAppId();
             }
             catch (Exception ex)
             {
                 ExceptionInit = ex;
+            }
+        }
+
+        private void InitMirror()
+        {
+            if (configData.mirror.MirrorEnabled)
+            {
+                ConVar.Server.maxconnectionsperip = configData.mirror.MaxConnectionsPerIP;
             }
         }
 
@@ -121,7 +128,7 @@ namespace Oxide.Plugins
             if (isExists == false)
                 PrintWarning("No data player: " + player.UserIDString);
 
-            if (ConfigData.players.BlockVpn)
+            if (configData.players.BlockVpn)
             {
                 if (isExists)
                 {
@@ -136,11 +143,22 @@ namespace Oxide.Plugins
         private object OnBeginPlayerSession(Connection connection, bool IsLicense)
         {
             string strLicense = IsLicense ? "steam" : "nosteam";
-            Puts($"Player({strLicense}) in process of connecting");
+
+            string strMirror = String.Empty;
+
+            if (configData.mirror.MirrorEnabled)
+            {
+                if (configData.mirror.IPS.Contains(connection.ipaddress.GetCorrectIp()))
+                {
+                    strMirror = "(Mirror-Connection)";
+                }
+            }
+
+            Puts($"Player {connection.username} {connection.userid} ({strLicense}) {strMirror} in process of connecting");
 
             if (IsLicense == false)
             {
-                if (ConfigData.players.whiteListConfig.WhiteListEnabled)
+                if (configData.players.whiteListConfig.WhiteListEnabled)
                 {
                     string strId = connection.userid.ToString();
 
@@ -158,7 +176,7 @@ namespace Oxide.Plugins
 
             if (isExists)
             {
-                if (ConfigData.players.ProtectLegitPlayers)
+                if (configData.players.ProtectLegitPlayers)
                 {
                     if (dataPlayer.IsSteam() && IsLicense == false)
                     {
@@ -172,7 +190,7 @@ namespace Oxide.Plugins
             else
                 DataPlayer.AddPlayer(connection.userid, IsLicense, connection.ipaddress);
 
-            if (ConfigData.players.BlockSmurf)
+            if (configData.players.BlockSmurf)
             {
                 ulong steamid = 0UL;
                 if (IsLicense == false)
@@ -202,14 +220,14 @@ namespace Oxide.Plugins
             [JsonProperty("Version")]
             public string Version;
 
-            [JsonProperty("AppId Rust-'252490' Cracked Rust-'480'")]
-            public int? AppId;
-
             [JsonProperty("Players")]
             public Players players;
 
             [JsonProperty("Block VPN Config")]
             public BlockVPN blockVpn;
+
+            [JsonIgnore]
+            public Mirror mirror;
 
             public class Players
             {
@@ -237,6 +255,21 @@ namespace Oxide.Plugins
                 [JsonProperty("Api key(http://proxycheck.io)")]
                 public string Key { get; set; }
             }
+
+            public class Mirror
+            {
+                [JsonProperty("Enabled")]
+                public bool MirrorEnabled { get; set; } = false;
+
+                [JsonProperty("Exclude IPS")]
+                public List<string> IPS { get; set; } = new List<string>()
+                {
+                    "127.0.0.1"
+                };
+
+                [JsonProperty("Max connection per IP('Server.MaxConnectionsPerIP')")]
+                public int MaxConnectionsPerIP { get; set; } = 20;
+            }
         }
 
         public class DataPlayer
@@ -255,6 +288,7 @@ namespace Oxide.Plugins
             public static void AddPlayer(ulong id, bool steam, string lastip)
             {
                 lastip = lastip.GetCorrectIp();
+
 
                 NoSteamHelper.Players.Add(new DataPlayer(id, steam, lastip));
                 NoSteamHelperController.SaveDataPlayers();
@@ -290,30 +324,40 @@ namespace Oxide.Plugins
     public static class NoSteamHelperController
     {
 
-        internal static void InitAppId()
-        {
-            Rust.Defines.appID = NoSteamHelper.ConfigData.AppId != null ? (uint)NoSteamHelper.ConfigData.AppId : 0;
-        }
-
         internal static void IsVpnConnection(WebRequests webrequest, BasePlayer player, Connection connection)
         {
-            if (NoSteamHelper.ConfigData.blockVpn.Key == "Your key" || string.IsNullOrEmpty(NoSteamHelper.ConfigData.blockVpn.Key))
+            if (NoSteamHelper.configData.blockVpn.Key == "Your key" || string.IsNullOrEmpty(NoSteamHelper.configData.blockVpn.Key))
                 return;
 
-            bool status = false;
+            bool detectedVpn = false;
             string ip = connection.ipaddress.GetCorrectIp();
+
+            if (ip == "127.0.0.1")
+                return;
+
+            if (NoSteamHelper.configData.mirror.MirrorEnabled)
+            {
+                if (NoSteamHelper.configData.mirror.IPS.Contains(ip))
+                    return;
+            }
 
             if (NoSteamHelper.CheckedIps.ContainsKey(ip) && NoSteamHelper.CheckedIps[ip])
                 player.Kick("VPN Detected");
 
-            webrequest.EnqueueGet($"http://proxycheck.io/v2/{ip}?key={NoSteamHelper.ConfigData.blockVpn.Key}&vpn=1", (code, response) =>
+            if (NoSteamHelper.CheckedIps.ContainsKey(ip))
             {
-                status = CheckResult(code, response, ip);
+                return;
+            }
 
-                if (status)
+
+            webrequest.EnqueueGet($"http://proxycheck.io/v2/{ip}?key={NoSteamHelper.configData.blockVpn.Key}&vpn=1", (code, response) =>
+            {
+                detectedVpn = CheckResult(code, response, ip);
+
+                if (detectedVpn)
                     player.Kick("VPN Detected");
 
-                NoSteamHelper.CheckedIps.Add(ip, status);
+                NoSteamHelper.CheckedIps.Add(ip, detectedVpn);
                 SaveDataIps();
             }, NoSteamHelper.Instance);
         }

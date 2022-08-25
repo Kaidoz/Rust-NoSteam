@@ -1,9 +1,9 @@
-﻿using HarmonyLib;
+﻿using Harmony;
 using Network;
 using Oxide.Ext.NoSteam.Patches;
 using Oxide.Ext.NoSteam.Utils;
 using Oxide.Ext.NoSteam.Utils.Steam;
-using Steamworks;
+using Oxide.Ext.NoSteam.Utils.Steam.Steamworks;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -14,18 +14,10 @@ namespace Oxide.Ext.NoSteam
     {
         static Core()
         {
-            OnAuthenticatedLocal = typeof(EACServer).GetMethod("OnAuthenticatedLocal", BindingFlags.Static | BindingFlags.NonPublic);
-
-            OnAuthenticatedRemote = typeof(EACServer).GetMethod("OnAuthenticatedRemote", BindingFlags.Static | BindingFlags.NonPublic);
-
             StatusPlayers = new Dictionary<ulong, BeginAuthResult>();
         }
 
-        internal static Harmony HarmonyInstance;
-
-        internal static readonly MethodInfo OnAuthenticatedLocal;
-
-        internal static readonly MethodInfo OnAuthenticatedRemote;
+        internal static Harmony.HarmonyInstance HarmonyInstance;
 
         internal static readonly Dictionary<ulong, BeginAuthResult> StatusPlayers;
 
@@ -33,12 +25,14 @@ namespace Oxide.Ext.NoSteam
         {
             DoPatch();
             SteamPatch.PatchSteamBeginPlayer();
+            SteamPatch.PatchSteamServerTags();
         }
 
         private static void DoPatch()
         {
-            HarmonyInstance = new Harmony("com.github.rust.exp");
-            HarmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
+            HarmonyInstance = HarmonyInstance.Create("com.github.rust.exp");
+            HarmonyInstance.DEBUG = false;
+            HarmonyInstance.PatchAll();
         }
 
         internal static int CountSteamPlayer()
@@ -85,11 +79,11 @@ namespace Oxide.Ext.NoSteam
 
         public static bool CheckIsSteamConnection(ulong userid)
         {
-            if (StatusPlayers.ContainsKey(userid) == false)
-                return false;
-
             if (Rust.Defines.appID == 480)
                 return true;
+
+            if (StatusPlayers.ContainsKey(userid) == false)
+                return false;
 
             return StatusPlayers[userid] == BeginAuthResult.OK;
         }

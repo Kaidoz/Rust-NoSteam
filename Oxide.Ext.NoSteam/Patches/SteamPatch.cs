@@ -1,9 +1,10 @@
-﻿using HarmonyLib;
+﻿using ConVar;
+using Harmony;
 using Oxide.Core;
 using Oxide.Ext.NoSteam.Utils;
 using Oxide.Ext.NoSteam.Utils.Steam;
+using Oxide.Ext.NoSteam.Utils.Steam.Steamworks;
 using Rust.Platform.Steam;
-using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,11 +16,12 @@ namespace Oxide.Ext.NoSteam.Patches
 {
     public static class SteamPatch
     {
+       
         private static Dictionary<ulong, BeginAuthResult> StatusPlayers => Core.StatusPlayers;
 
         public static void PatchSteamBeginPlayer()
         {
-            var type = NoSteamExtension.AssemblySteamworks.DefinedTypes.First(x => x.Name == "ISteamGameServer");
+            var type = SteamworksLoader.Assembly.DefinedTypes.First(x => x.Name == "ISteamGameServer");
 
             MethodBase OnBeginPlayerSeesion = type.GetDeclaredMethod("BeginAuthSession");
 
@@ -28,10 +30,21 @@ namespace Oxide.Ext.NoSteam.Patches
             Core.HarmonyInstance.Patch(OnBeginPlayerSeesion, null, harmonyMethod);
         }
 
+        public static void PatchSteamServerTags()
+        {
+            var type = SteamworksLoader.Assembly.DefinedTypes.First(x => x.Name == "SteamServer");
+
+            MethodBase set_GameTags = type.GetDeclaredMethod("set_GameTags");
+
+            var harmonyMethod = new HarmonyMethod(typeof(SteamPlatformBeginPlayer2), "Prefix");
+
+            Core.HarmonyInstance.Patch(set_GameTags, null, harmonyMethod);
+        }
+
+        private static System.Random rnd = new System.Random();
+
         private static readonly Regex steamCountRegex = new Regex(@"cp*[0-9]+", RegexOptions.Compiled);
 
-        [HarmonyPatch(typeof(SteamServer))]
-        [HarmonyPatch("set_GameTags")]
         private static class SteamServerPatch3
         {
             [HarmonyPrefix]
@@ -44,9 +57,19 @@ namespace Oxide.Ext.NoSteam.Patches
                 if (intValue != null && intValue is int)
                     count = (int)intValue;
 
+                if (Config.configData.fakePlayers.Enabled)
+                {
+                    int rndCount = rnd.Next(Config.configData.fakePlayers.MinCount, Config.configData.fakePlayers.MaxCount);
+                    count += rndCount;
+                }
+
+                if (count >= Server.maxplayers)
+                {
+                    count = Server.maxplayers - 1;
+                }
+
                 string strCount = "cp" + count;
 
-                
                 value = steamCountRegex.Replace(value, strCount);
             }
         }
@@ -91,6 +114,7 @@ namespace Oxide.Ext.NoSteam.Patches
             private static bool Prefix(ulong steamid, ulong ownerSteamID, AuthResponse response, ref bool __result)
             {
                 __result = true;
+
                 return false;
             }
         }
@@ -116,12 +140,10 @@ namespace Oxide.Ext.NoSteam.Patches
         [HarmonyPatch(typeof(SteamPlatform), nameof(SteamPlatform.BeginPlayerSession))]
         private static class SteamPlatformBeginPlayer
         {
-            [HarmonyPrefix]
-            private static bool HarmonyPrefix(ulong userId, byte[] authToken, ref bool __result)
+            [HarmonyPostfix]
+            private static void HarmonyPrefix(ulong userId, byte[] authToken, ref bool __result)
             {
                 Core.CheckServerParameters();
-
-                SteamServer.BeginAuthSession(authToken, userId);
 
                 var ticket = new SteamTicket(authToken);
 
@@ -134,7 +156,7 @@ namespace Oxide.Ext.NoSteam.Patches
                         Logger.Print("CheckIsValidConnection: " + userId);
                     }
 
-                    return false;
+                    return;
                 }
 
                 bool IsLicense = ticket.clientVersion == SteamTicket.ClientVersion.Steam;
@@ -150,12 +172,12 @@ namespace Oxide.Ext.NoSteam.Patches
 
                 if (reason == null)
                 {
-                    return false;
+                    return;
                 }
 
                 ConnectionAuth.Reject(connection, reason.ToString(), null);
 
-                return false;
+                return;
             }
         }
 
