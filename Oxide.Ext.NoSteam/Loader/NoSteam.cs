@@ -36,6 +36,16 @@ namespace Oxide.Ext.NoSteam.Loader
         private static void Init()
         {
             Server.encryption = 0;
+            Server.secure = true;
+
+            LoadConfig();
+        }
+
+        private static void LoadConfig()
+        {
+            Utils.Config.LoadConfig();
+
+            Rust.Defines.appID = Utils.Config.configData.AppId != null ? (uint)Utils.Config.configData.AppId : 252490;
         }
 
         public static void Output(string text)

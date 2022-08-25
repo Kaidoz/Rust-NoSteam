@@ -9,7 +9,7 @@ using static Oxide.Plugins.NoSteamHelperModels;
 
 namespace Oxide.Plugins
 {
-    [Info("NoSteamHelper", "Kaidoz", "1.2.0")]
+    [Info("NoSteamHelper", "Kaidoz", "1.2.1")]
     [Description("A plugin that extends nosteam features")]
     internal class NoSteamHelper : RustPlugin
     {
@@ -52,7 +52,6 @@ namespace Oxide.Plugins
             var config = new ConfigData
             {
                 Version = this.Version.ToString(),
-                AppId = 252490,
                 players = new ConfigData.Players()
                 {
                     BlockSmurf = true,
@@ -104,8 +103,6 @@ namespace Oxide.Plugins
                 SaveConfig();
 
                 InitData();
-
-                NoSteamHelperController.InitAppId();
             }
             catch (Exception ex)
             {
@@ -202,9 +199,6 @@ namespace Oxide.Plugins
             [JsonProperty("Version")]
             public string Version;
 
-            [JsonProperty("AppId Rust-'252490' Cracked Rust-'480'")]
-            public int? AppId;
-
             [JsonProperty("Players")]
             public Players players;
 
@@ -289,11 +283,6 @@ namespace Oxide.Plugins
 
     public static class NoSteamHelperController
     {
-
-        internal static void InitAppId()
-        {
-            Rust.Defines.appID = NoSteamHelper.ConfigData.AppId != null ? (uint)NoSteamHelper.ConfigData.AppId : 0;
-        }
 
         internal static void IsVpnConnection(WebRequests webrequest, BasePlayer player, Connection connection)
         {

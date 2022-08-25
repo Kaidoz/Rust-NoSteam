@@ -19,12 +19,18 @@ namespace Oxide.Ext.NoSteam.Patches
             }
         }
 
+        public static string ServerTags;
+
         [HarmonyPatch(typeof(ServerMgr), "UpdateServerInformation")]
         private static class UpdateServerInformationPatch
         {
+
             [HarmonyPrefix]
             private static void Prefix()
             {
+                if (CommandLinePatch.Intilized == false)
+                    return;
+
                 int count = Core.CountSteamPlayer();
 
                 int countNoSteam = BasePlayer.activePlayerList.Count - count;
@@ -37,10 +43,10 @@ namespace Oxide.Ext.NoSteam.Patches
                 // Поддержка так называемого говна куска - GameStores, украинского ватника
                 string strCountGs = "fl" + countNoSteam;
 
-                if (string.IsNullOrEmpty(ConVar.Server.tags))
+                if (string.IsNullOrEmpty(ServerTags) && ServerTags.Contains("ki,") == false)
                     ConVar.Server.tags = strHasNoSteam + "," + strCountAll + "," + strCountGs;
                 else
-                    ConVar.Server.tags += "," + strHasNoSteam + "," + strCountAll + "," + strCountGs;
+                    ConVar.Server.tags = ServerTags + "," + strHasNoSteam + "," + strCountAll + "," + strCountGs;
             }
         }
     }

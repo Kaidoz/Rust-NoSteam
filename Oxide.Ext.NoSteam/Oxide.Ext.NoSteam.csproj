@@ -163,12 +163,15 @@
     <Compile Include="NoSteamExtension.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Patches\BasePlayerPatch.cs" />
+    <Compile Include="Patches\CommandLinePatch.cs" />
     <Compile Include="Patches\EacPatch.cs" />
     <Compile Include="Patches\OtherPatch.cs" />
     <Compile Include="Patches\OxidePatch.cs" />
     <Compile Include="Patches\ServerPatch.cs" />
     <Compile Include="Patches\SteamPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\BanSystem.cs" />
+    <Compile Include="Utils\Config.cs" />
     <Compile Include="Utils\Logger.cs" />
     <Compile Include="Utils\Steam\Convertor.cs" />
     <Compile Include="Utils\Steam\SteamTicket.cs" />

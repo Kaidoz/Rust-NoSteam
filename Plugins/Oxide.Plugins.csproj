@@ -34,6 +34,7 @@
   <ItemGroup>
     <Compile Include="NoSteamHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SteamChecksMod.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
