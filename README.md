@@ -12,6 +12,7 @@ Discord: https://discord.gg/Tn3kzbE
 - Protected steam players against hack(fake steamid)
 - Nosteam players are not displayed in server list to avoid ban
 - Kicked players if use developers ids
+
 📝️ » Information
 
     Make sure you have the Microsoft Visual C++ 2019-2022 Redistributable (x64) and .NET Framework 4.8 installed.
