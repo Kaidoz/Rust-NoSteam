@@ -8,58 +8,45 @@ Discord: https://discord.gg/Tn3kzbE
 - VISA: 4279380632007755
 - BTC: 1DNEbR5Yk6a6NXDuQHB2XGAAjaqL8NXvUc
 
-### Info
+## 📝️ » Information
 - Protected steam players against hack(fake steamid)
 - Nosteam players are not displayed in server list to avoid ban
 - Kicked players if use developers ids
 
-📝️ » Information
-
-    Make sure you have the Microsoft Visual C++ 2019-2022 Redistributable (x64) and .NET Framework 4.8 installed.
-    Remember to have the latest version of the modification!
-    Check the list of all versions here.
-
-### Api
+## 🛠️ » Api and Hooks
 #### IsPlayerNoSteam
 Check player
 ```C#
-IsPlayerNoSteam(ulong steamid)
+IsSteam(ulong steamid)
+IsSteam(Connection connection)
+IsSteam(BasePlayer player)
 ```
 ##### Example 
 ```C#
-[PluginReference("NoSteamHelper")] 
-private Plugin NoSteamHelper;
-
 bool IsPlayersSteam(BasePlayer player)
 {
-    if(NoSteamHelper.Call("IsPlayerNoSteam", player.userID)==null)
+    if(Call<bool>("IsSteam", player) == true)
       return true;
     return false;
 }
 ```
-
 ### Hooks
-#### OnSteamAuthFailed
-Returning a non-null value will not cancel kick player.
-```C#
-object OnSteamAuthFailed(Connection connection)
-{
-  Puts($"{connection.userid} is nosteam player, but it doesn't matter to us c:");
-  return null;
-}
-```
-
-#### CanNewConnection
+#### OnBeginPlayerSession
 Returning a non-null value kick player with reason as value.
 ```C#
-object CanNewConnection(Connection connection, bool isSteam)
+object OnBeginPlayerSession(Connection connection, bool isLicense)
 {
-  string status = isSteam ? "steam" : "nosteam";
-  Puts($"{connection.userid} is {status} player");
+  string status = isLicense ? "steam" : "nosteam";
+  Puts($"{connection.userid} is {status} player c:");
   return null;
 }
 ```
+## 🔧 » Supported operating systems
+| System  | Status |
+|---------|--------|
+| Windows |   ✅   |
+| Linux   |   ✅   | 
 
-### Credits
+## Credits
 
 [Harmony](https://github.com/pardeike/Harmony) patcher used in the project
