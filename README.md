@@ -1,7 +1,7 @@
 # Rust-NoSteam
 Discord: https://discord.gg/Tn3kzbE
 
-### Donations
+## ⭐ » Donations
 - https://www.buymeacoffee.com/kaidoz
 - https://boosty.to/kaidoz/single-payment/donation/29238
 - https://qiwi.com/n/KAIDOZ
@@ -47,6 +47,6 @@ object OnBeginPlayerSession(Connection connection, bool isLicense)
 | Windows |   ✅   |
 | Linux   |   ✅   | 
 
-## Credits
+## 🧶 » Credits
 
 [Harmony](https://github.com/pardeike/Harmony) patcher used in the project
