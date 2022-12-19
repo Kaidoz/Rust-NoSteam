@@ -36,7 +36,7 @@ namespace Oxide.Ext.NoSteam.Patches
 
             MethodBase set_GameTags = type.GetDeclaredMethod("set_GameTags");
 
-            var harmonyMethod = new HarmonyMethod(typeof(SteamPlatformBeginPlayer2), "Prefix");
+            var harmonyMethod = new HarmonyMethod(typeof(SteamServerPatch3), "Prefix");
 
             Core.HarmonyInstance.Patch(set_GameTags, null, harmonyMethod);
         }
