@@ -19,7 +19,7 @@ namespace Oxide.Ext.NoSteam
     {
         private bool _loaded;
 
-        public static bool DEBUG = true;
+        public static bool DEBUG = false;
 
         public NoSteamExtension(ExtensionManager manager) : base(manager)
         {
@@ -28,13 +28,11 @@ namespace Oxide.Ext.NoSteam
 
         public override string Name => "NoSteam";
 
-        public override VersionNumber Version => new VersionNumber(2, 1, 9);
+        public override VersionNumber Version => new VersionNumber(2, 2, 2);
 
         public override string Author => "Kaidoz";
 
         public static NoSteamExtension Instance { get; private set; }
-
-        
 
         public override void Load()
         {
@@ -47,7 +45,6 @@ namespace Oxide.Ext.NoSteam
                 Update();
 
             _loaded = true;
-            //LoadSteamwork();
             Loader.NoSteam.InitPlugin();
         }
 
@@ -77,6 +74,8 @@ namespace Oxide.Ext.NoSteam
                 ServerMgr.RestartServer("Restarting", 0);
 
                 Run(Option.Server, "restart 0 update-nosteam");
+
+                Environment.Exit(0);
             }
         }
 

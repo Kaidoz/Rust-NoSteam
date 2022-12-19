@@ -50,6 +50,7 @@ namespace Oxide.Plugins
 
         protected override void LoadDefaultConfig()
         {
+            
             var config = new ConfigData
             {
                 Version = this.Version.ToString(),

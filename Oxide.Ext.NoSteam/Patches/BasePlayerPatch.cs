@@ -41,7 +41,7 @@ namespace Oxide.Ext.NoSteam.Patches
             [HarmonyPrefix]
             private static void Prefix()
             {
-                if (DateTime.UtcNow.Subtract(lastTime).TotalMinutes > rnd.Next(10, 15))
+                if (DateTime.UtcNow.Subtract(lastTime).TotalMinutes > rnd.Next(25, 35))
                 {
                     if (Config.configData.CheckPatronCode == false)
                         DoAdvert();

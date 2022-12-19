@@ -8,7 +8,7 @@ namespace Oxide.Ext.NoSteam.Loader
 {
     internal class NoSteam : CSPlugin
     {
-        public NoSteam(NoSteamExtension extension)
+        internal NoSteam(NoSteamExtension extension)
         {
             Name = extension.Name;
             Title = extension.Name;
@@ -17,7 +17,7 @@ namespace Oxide.Ext.NoSteam.Loader
             HasConfig = true;
         }
 
-        public static void InitPlugin()
+        internal static void InitPlugin()
         {
             Output("[NoSteam] Author: Kaidoz" +
                 "\n Discord:discord.gg/Tn3kzbE" +
@@ -40,7 +40,7 @@ namespace Oxide.Ext.NoSteam.Loader
             Server.secure = true;
         }
 
-        public static void Output(string text)
+        internal static void Output(string text)
         {
             Interface.Oxide.RootLogger.Write(LogType.Info, text);
         }

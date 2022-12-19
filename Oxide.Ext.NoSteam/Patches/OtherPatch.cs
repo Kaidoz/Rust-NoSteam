@@ -4,13 +4,13 @@ using AppServer = CompanionServer.Server;
 
 namespace Oxide.Ext.NoSteam.Patches
 {
-    public static class OtherPatch
+    internal static class OtherPatch
     {
         [HarmonyPatch(typeof(DeveloperList), nameof(DeveloperList.Contains), new Type[] { typeof(string) })]
         private class ConnectionAuthPatch
         {
             [HarmonyPrefix]
-            private static bool Prefix(string steamid, ref bool __result)
+            public static bool Prefix(string steamid, ref bool __result)
             {
                 __result = false;
 
@@ -22,7 +22,7 @@ namespace Oxide.Ext.NoSteam.Patches
         private static class CompanionServerPatch
         {
             [HarmonyPrefix]
-            private static bool Prefix()
+            public static bool Prefix()
             {
                 ConVar.App.port = -1;
                 return false;

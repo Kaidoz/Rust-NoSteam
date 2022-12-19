@@ -22,7 +22,7 @@ namespace Oxide.Ext.NoSteam.Patches
         private static class Patch01
         {
             [HarmonyPrefix]
-            private static bool Prefix(Connection connection)
+            public static bool Prefix(Connection connection)
             {
                 if (Core.CheckIsSteamConnection(connection.userid) == true && Rust.Defines.appID != 480)
                 {

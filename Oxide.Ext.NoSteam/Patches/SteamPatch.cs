@@ -14,12 +14,12 @@ using System.Threading.Tasks;
 
 namespace Oxide.Ext.NoSteam.Patches
 {
-    public static class SteamPatch
+    internal static class SteamPatch
     {
        
         private static Dictionary<ulong, BeginAuthResult> StatusPlayers => Core.StatusPlayers;
 
-        public static void PatchSteamBeginPlayer()
+        internal static void PatchSteamBeginPlayer()
         {
             var type = SteamworksLoader.Assembly.DefinedTypes.First(x => x.Name == "ISteamGameServer");
 
@@ -30,7 +30,7 @@ namespace Oxide.Ext.NoSteam.Patches
             Core.HarmonyInstance.Patch(OnBeginPlayerSeesion, null, harmonyMethod);
         }
 
-        public static void PatchSteamServerTags()
+        internal static void PatchSteamServerTags()
         {
             var type = SteamworksLoader.Assembly.DefinedTypes.First(x => x.Name == "SteamServer");
 
@@ -38,17 +38,17 @@ namespace Oxide.Ext.NoSteam.Patches
 
             var harmonyMethod = new HarmonyMethod(typeof(SteamServerPatch3), "Prefix");
 
-            Core.HarmonyInstance.Patch(set_GameTags, null, harmonyMethod);
+            Core.HarmonyInstance.Patch(set_GameTags, harmonyMethod);
         }
 
         private static System.Random rnd = new System.Random();
 
         private static readonly Regex steamCountRegex = new Regex(@"cp*[0-9]+", RegexOptions.Compiled);
 
-        private static class SteamServerPatch3
+        internal static class SteamServerPatch3
         {
             [HarmonyPrefix]
-            private static void Prefix(ref string value)
+            public static void Prefix(ref string value)
             {
                 int count = Core.CountSteamPlayer();
 
@@ -75,10 +75,10 @@ namespace Oxide.Ext.NoSteam.Patches
         }
 
         [HarmonyPatch(typeof(SteamInventory), "UpdateSteamInventory")]
-        private static class SteamInventoryPatch
+        internal static class SteamInventoryPatch
         {
             [HarmonyPrefix]
-            private static bool Prefix(BaseEntity.RPCMessage msg)
+            public static bool Prefix(BaseEntity.RPCMessage msg)
             {
                 if (Rust.Defines.appID == 480)
                     return false;
@@ -93,10 +93,10 @@ namespace Oxide.Ext.NoSteam.Patches
         }
 
         [HarmonyPatch(typeof(SteamPlatform), nameof(SteamPlatform.UpdatePlayerSession))]
-        private static class SteamPlatformUpdatePlayer
+        internal static class SteamPlatformUpdatePlayer
         {
             [HarmonyPrefix]
-            private static bool Prefix(ulong userId, string userName)
+            public static bool Prefix(ulong userId, string userName)
             {
                 if (Core.CheckIsSteamConnection(userId) == false)
                 {
@@ -108,10 +108,10 @@ namespace Oxide.Ext.NoSteam.Patches
         }
 
         [HarmonyPatch(typeof(Auth_Steam), nameof(Auth_Steam.ValidateConnecting))]
-        private static class Auth_SteamPatch
+        internal static class Auth_SteamPatch
         {
             [HarmonyPrefix]
-            private static bool Prefix(ulong steamid, ulong ownerSteamID, AuthResponse response, ref bool __result)
+            public static bool Prefix(ulong steamid, ulong ownerSteamID, AuthResponse response, ref bool __result)
             {
                 __result = true;
 
@@ -120,10 +120,10 @@ namespace Oxide.Ext.NoSteam.Patches
         }
 
         [HarmonyPatch(typeof(SteamPlatform), nameof(SteamPlatform.EndPlayerSession))]
-        private static class SteamPlatformEndPlayer
+        internal static class SteamPlatformEndPlayer
         {
             [HarmonyPrefix]
-            private static bool Prefix(ulong userId)
+            public static bool Prefix(ulong userId)
             {
                 bool result = true;
 
@@ -138,10 +138,10 @@ namespace Oxide.Ext.NoSteam.Patches
         }
 
         [HarmonyPatch(typeof(SteamPlatform), nameof(SteamPlatform.BeginPlayerSession))]
-        private static class SteamPlatformBeginPlayer
+        internal static class SteamPlatformBeginPlayer
         {
             [HarmonyPostfix]
-            private static void HarmonyPrefix(ulong userId, byte[] authToken, ref bool __result)
+            public static void HarmonyPrefix(ulong userId, byte[] authToken, ref bool __result)
             {
                 Core.CheckServerParameters();
 
@@ -181,10 +181,10 @@ namespace Oxide.Ext.NoSteam.Patches
             }
         }
 
-        private static class SteamPlatformBeginPlayer2
+        internal static class SteamPlatformBeginPlayer2
         {
             [HarmonyPostfix]
-            private static void HarmonyPostfix(IntPtr pAuthTicket, int cbAuthTicket, SteamId steamID, ref BeginAuthResult __result)
+            public static void HarmonyPostfix(IntPtr pAuthTicket, int cbAuthTicket, SteamId steamID, ref BeginAuthResult __result)
             {
                 if (NoSteamExtension.DEBUG)
                 {

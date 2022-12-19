@@ -17,11 +17,11 @@ namespace Oxide.Ext.NoSteam
             StatusPlayers = new Dictionary<ulong, BeginAuthResult>();
         }
 
-        internal static Harmony.HarmonyInstance HarmonyInstance;
+        internal static HarmonyInstance HarmonyInstance;
 
         internal static readonly Dictionary<ulong, BeginAuthResult> StatusPlayers;
 
-        public static void Start()
+        internal static void Start()
         {
             DoPatch();
             SteamPatch.PatchSteamBeginPlayer();
@@ -49,7 +49,7 @@ namespace Oxide.Ext.NoSteam
             return count;
         }
 
-        public static bool CheckIsSteamConnection(Connection connection)
+        internal static bool CheckIsSteamConnection(Connection connection)
         {
             if (connection == null)
                 return false;
@@ -77,7 +77,7 @@ namespace Oxide.Ext.NoSteam
             }
         }
 
-        public static bool CheckIsSteamConnection(ulong userid)
+        internal static bool CheckIsSteamConnection(ulong userid)
         {
             if (Rust.Defines.appID == 480)
                 return true;
@@ -88,7 +88,7 @@ namespace Oxide.Ext.NoSteam
             return StatusPlayers[userid] == BeginAuthResult.OK;
         }
 
-        public static bool CheckIsValidConnection(ulong userid, SteamTicket steamTicket)
+        internal static bool CheckIsValidConnection(ulong userid, SteamTicket steamTicket)
         {
             if (StatusPlayers.ContainsKey(userid) == false)
                 return false;

@@ -1,11 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.33027.164
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33103.201
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Oxide.Plugins", "Plugins\Oxide.Plugins.csproj", "{CAE13537-5661-4660-9CEF-E865FA190C09}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extension", "Extension", "{19BC2003-5148-4704-8893-DD4D75B3CC38}"
+	ProjectSection(SolutionItems) = preProject
+		ServerOldDevs.txt = ServerOldDevs.txt
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{D35EA8BC-9E34-48F1-99B1-4E7F189F8FF8}"
 EndProject

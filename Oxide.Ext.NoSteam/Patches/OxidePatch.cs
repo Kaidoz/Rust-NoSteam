@@ -64,7 +64,7 @@ namespace Oxide.Ext.NoSteam.Patches
         }
 
         [HarmonyPatch(typeof(OxideMod), nameof(OxideMod.CallHook))]
-        public static class DoTickPatch
+        internal static class DoTickPatch
         {
             [HarmonyPrefix]
             public static bool Prefix(ref object __result, string hookname, params object[] args)

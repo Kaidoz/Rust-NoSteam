@@ -15,7 +15,7 @@ namespace Oxide.Ext.NoSteam.Patches
         private static class CompanionServerPatch
         {
             [HarmonyPrefix]
-            private static void Prefix()
+            public  static void Prefix()
             {
                 Server.encryption = 0;
                 Server.secure = true;
