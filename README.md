@@ -1,22 +1,21 @@
 # Rust-NoSteam
 Discord: [https://discord.gg/Tn3kzbE](https://discord.gg/u5pQBfhf3q)
 
-## ⭐ » Donations
+## ⭐ Donations
 - https://boosty.to/kaidoz/single-payment/donation/29238
 
-## 📝️ » Information
+## 📝️ Information
 - Check every player for fake steamid or other something(100% protection)
 - Have config file for change AppId
 - Nosteam players are not displayed in server list to avoid ban
 
-## 🔧 » Supported operating systems
+## 🔧 Supported operating systems
 | System  | Status |
 |---------|--------|
 | Windows |   ✅   |
 | Linux   |   ✅   | 
 
-## FAQ
-
+## 📝️ FAQ
 ### Download
   Download NoSteam from GitHub: https://github.com/Kaidoz/Rust-NoSteam or from ⁠🧩updates.
 ### Installation
