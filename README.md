@@ -20,7 +20,7 @@ Discord: [https://discord.gg/Tn3kzbE](https://discord.gg/u5pQBfhf3q)
 
 ## 📝️ FAQ
 ### Download
-  Download NoSteam from GitHub: https://github.com/Kaidoz/Rust-NoSteam or from ⁠🧩updates.
+  Download NoSteam from GitHub: [Releases](https://github.com/Kaidoz/Rust-NoSteam/releases).
 ### Installation
   Install the mod at the following path: ~server\harmonymods (or ~server\carbon\harmony).
 ### Logging
