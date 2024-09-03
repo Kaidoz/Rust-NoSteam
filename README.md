@@ -8,12 +8,15 @@ Discord: [https://discord.gg/Tn3kzbE](https://discord.gg/u5pQBfhf3q)
 - Check every player for fake steamid or other something(100% protection)
 - Have config file for change AppId
 - Nosteam players are not displayed in server list to avoid ban
+- Minimum requirements for working.
 
 ## 🔧 Supported operating systems
 | System  | Status |
 |---------|--------|
 | Windows |   ✅   |
 | Linux   |   ✅   | 
+
+
 
 ## 📝️ FAQ
 ### Download
