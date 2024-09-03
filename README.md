@@ -28,6 +28,6 @@ Discord: [https://discord.gg/Tn3kzbE](https://discord.gg/u5pQBfhf3q)
 ### Configuration:
   The configuration file is located at the following path: ~server\config\NoSteam.json
 
-## 🧶 » Credits
+## 🧶 Credits
 
 [Harmony](https://github.com/pardeike/Harmony) patcher used in the project
