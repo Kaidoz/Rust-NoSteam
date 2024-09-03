@@ -15,6 +15,17 @@ Discord: [https://discord.gg/Tn3kzbE](https://discord.gg/u5pQBfhf3q)
 | Windows |   ✅   |
 | Linux   |   ✅   | 
 
+## FAQ
+
+### Download
+  Download NoSteam from GitHub: https://github.com/Kaidoz/Rust-NoSteam or from ⁠🧩updates.
+### Installation
+  Install the mod at the following path: ~server\harmonymods (or ~server\carbon\harmony).
+### Logging
+  Logs are saved at the following path: ~server\logs\nosteam_log.txt
+### Configuration:
+  The configuration file is located at the following path: ~server\config\NoSteam.json
+
 ## 🧶 » Credits
 
 [Harmony](https://github.com/pardeike/Harmony) patcher used in the project
