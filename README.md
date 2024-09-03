@@ -1,5 +1,6 @@
 # Rust-NoSteam
 Discord: [https://discord.gg/Tn3kzbE](https://discord.gg/u5pQBfhf3q)
+FAQ, Support and more.
 
 ## ⭐ Donations
 - https://boosty.to/kaidoz/single-payment/donation/29238
