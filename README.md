@@ -2,7 +2,7 @@
 Discord: [https://discord.gg/Tn3kzbE](https://discord.gg/u5pQBfhf3q)
 FAQ, Support and more.
 
-## Rust
+## Rust-client
 https://skachat-rust.com/
 
 ## ⭐ Donations
